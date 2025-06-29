@@ -1,0 +1,353 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: radial-gradient(circle at 60% 40%, #f347a3 0%, #a259f7 40%, #232946 100%);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+}
+
+.osu-navbar {
+    width: 220px;
+    background: linear-gradient(135deg, #a259f7 60%, #f347a3 100%);
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 16px rgba(162, 89, 247, 0.15);
+    justify-content: space-between;
+    transition: width 0.3s;
+    z-index: 100;
+}
+
+.osu-navbar.collapsed {
+    width: 60px;
+}
+
+.osu-navbar-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-align: left;
+    padding: 32px 30px 16px 30px;
+    letter-spacing: 1px;
+    transition: opacity 0.3s;
+}
+
+.osu-navbar.collapsed .osu-navbar-title {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.osu-navbar nav {
+    flex: 1;
+    width: 100%;
+}
+
+.osu-navbar ul {
+    padding: 0;
+    margin: 0;
+}
+
+.osu-navbar li {
+    width: 100%;
+    margin: 0 0 16px 0; /* space between items */
+    padding: 0;
+    list-style: none;
+}
+
+.osu-navbar a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 16px 24px;
+    border-radius: 10px;
+    background: transparent;
+    color: #fff; /* White by default */
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    margin: 0;
+}
+
+.osu-navbar a:hover,
+.osu-navbar .dropdown-toggle.active {
+    background: #fff;
+    color: #a259f7; /* Purple on hover/active */
+}
+
+.osu-navbar-bottom {
+    padding: 24px 30px;
+    border-top: 1px solid #fff3;
+    text-align: left;
+    transition: padding 0.3s;
+}
+
+.osu-navbar.collapsed .osu-navbar-bottom {
+    padding: 24px 10px;
+    text-align: center;
+}
+
+.sidebar-toggle-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    outline: none;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 16px 24px;
+    border-radius: 10px;
+    transition: background 0.2s, color 0.2s;
+    margin: 0;
+}
+
+.sidebar-toggle-btn:hover {
+    background: #fff;
+    color: #a259f7;
+}
+
+.sidebar-toggle-text {
+    margin-left: 16px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: inherit;
+    transition: opacity 0.3s, width 0.3s;
+    white-space: nowrap;
+}
+
+.osu-navbar.collapsed .sidebar-toggle-text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+}
+
+.osu-navbar.collapsed .sidebar-toggle-btn {
+    justify-content: center;
+    padding: 16px 0;
+}
+
+#sidebar-toggle-icon {
+    pointer-events: none;
+}
+
+.dropdown {
+    width: 100%;
+    position: relative; /* Needed for absolute positioning of menu */
+}
+
+/* Hide by default */
+.dropdown-menu {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px #f347a355;
+    width: 100%;           /* Fill the parent li width */
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    pointer-events: auto;
+    opacity: 1;
+    position: static;      /* Ensure it's in the flow */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(.4,0,.2,1), opacity 0.2s;
+}
+
+/* Show when .show is added */
+.dropdown-menu.show {
+    display: flex;
+    padding: 8px 0;   /* Only add when shown */
+    margin-top: 4px;  /* Only add when shown */
+    pointer-events: auto;
+    opacity: 1;
+    max-height: 500px; /* Large enough for all items */
+    overflow: visible;
+}
+
+.osu-navbar.collapsed .dropdown-menu {
+    display: none !important;
+}
+
+.dropdown-menu li {
+    margin: 0;
+    width: 100%;
+}
+
+.dropdown-menu a {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 24px;
+    border-radius: 0;
+    color: #a259f7; /* <-- purple */
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+    display: block;
+}
+
+.dropdown-menu a:hover {
+    background: #a259f7; /* <-- purple background on hover */
+    color: #fff;
+}
+
+.osu-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin-left: 220px;
+    transition: margin-left 0.3s;
+}
+
+.osu-main.collapsed {
+    margin-left: 60px;
+}
+
+.osu-info {
+    background: rgba(255,255,255,0.85);
+    padding: 40px 60px;
+    border-radius: 16px;
+    box-shadow: 0 4px 32px rgba(162, 89, 247, 0.15), 0 2px 8px #f347a355;
+    text-align: center;
+    max-width: 500px;
+    color: #a259f7;
+    border: 2px solid #f347a3;
+}
+
+.osu-info h1 {
+    color: #f347a3;
+    margin-bottom: 16px;
+}
+
+.osu-info p {
+    color: #232946;
+    font-weight: 500;
+}
+
+.nav-icon {
+    display: inline-block;
+    font-size: 1.4em;
+    vertical-align: middle;
+    margin-right: 12px;
+    transition: margin 0.3s;
+}
+
+.nav-text {
+    display: inline-block;
+    vertical-align: middle;
+    transition: opacity 0.3s, width 0.3s;
+}
+
+.osu-navbar.collapsed .nav-text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.osu-navbar.collapsed .nav-icon {
+    margin-right: 0;              /* Remove right margin */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* For dropdown menu icons/text */
+.dropdown-menu .nav-icon {
+    margin-right: 8px;
+}
+
+.osu-navbar.collapsed .dropdown-menu .nav-icon {
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+}
+
+.osu-navbar.collapsed .dropdown-menu .nav-text {
+    display: none;
+}
+
+.osu-navbar-logo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px 0 12px 0;
+    scale: 1.5;
+    margin-bottom: 32px;   /* <-- add spacing below logo */
+}
+
+.osu-navbar-logo img {
+    width: 48px;
+    height: 48px;
+    display: block;
+}
+
+.osu-navbar.collapsed .osu-navbar-logo img {
+    width: 32px;
+    height: 32px;
+    scale: 1;
+    transition: width 0.3s, height 0.3s, scale 0.3s;
+}
+
+@media (max-width: 700px) {
+    .osu-navbar {
+        width: 80px;
+    }
+    .osu-navbar.collapsed {
+        width: 40px;
+    }
+    .osu-navbar a {
+        font-size: 1rem;
+        padding: 10px 10px;
+    }
+    .osu-main {
+        margin-left: 80px;
+    }
+    .osu-main.collapsed {
+        margin-left: 40px;
+    }
+    .osu-info {
+        padding: 20px 10px;
+    }    
+}
+
+#news-feed {
+    display: block;           /* Always block so it can animate */
+    opacity: 0;               /* Start hidden */
+    pointer-events: none;
+    bottom: 30px;
+    position: fixed;
+    transform: translateX(-50%);
+    left: 50%;
+    color: #fff;
+    padding: 12px 28px;
+    border-radius: 8px;
+    z-index: 9999;
+    font-size: 17px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    background: #222;
+    transition: opacity 0.2s ease;
+}
+
+#news-feed.show {
+    opacity: 1;
+    pointer-events: auto;
+}

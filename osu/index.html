@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>osu! med74</title>
+    <link rel="stylesheet" href="styles-osu.css">
+    <link rel="icon" type="image/x-icon" href="./content/icon.ico">
+</head>
+
+<body>
+    <script>
+        // function for news/announcement/notification
+        function showNews(message) {
+            let newsFeed = document.getElementById('news-feed');
+            newsFeed.textContent = message;
+            newsFeed.classList.add('show');
+            setTimeout(() => {
+                newsFeed.classList.remove('show');
+            }, 2000); // Show for 2 seconds, then fade out
+        }
+    </script>
+    <div class="osu-navbar" id="osu-navbar">
+        <div class="osu-navbar-logo">
+            <img src="content/icons/osu.png" alt="osu! logo">
+        </div>
+        <nav>
+            <ul>
+                <li>
+                    <a href="home.html" target="main-iframe">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-text">Home</span>
+                    </a>
+                </li>
+                <li class="dropdown" id="tools-dropdown">
+                    <a href="#" class="dropdown-toggle" id="tools-toggle">
+                        <span class="nav-icon">🛠️</span>
+                        <span class="nav-text">Tools ▼</span>
+                    </a>
+                    <ul class="dropdown-menu" id="tools-menu">
+                        <li><a href="scheduler.html" target="main-iframe"><span class="nav-text">Scheduler</span></a>
+                        </li>
+                        <li><a onclick="showNews('still WIP :<'); return false;"><span class="nav-text">comming
+                                    soon</span></a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="touraments.html" target="main-iframe">
+                        <span class="nav-icon">🏆</span>
+                        <span class="nav-text">Tournaments</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://osu.ppy.sh/users/29161604" target="_blank">
+                        <span class="nav-icon">👤</span>
+                        <span class="nav-text">My Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://med74.rf.gd/" target="_blank">
+                        <span class="nav-icon">🌐</span>
+                        <span class="nav-text">med74</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="osu-navbar-bottom">
+            <button id="sidebar-toggle" class="sidebar-toggle-btn" title="Toggle sidebar">
+                <span id="sidebar-toggle-icon">&#9776;</span>
+                <span class="sidebar-toggle-text">Collapse</span>
+            </button>
+        </div>
+    </div>
+    <div class="osu-main" id="osu-main">
+        <iframe id="main-iframe" name="main-iframe" src="home.html" frameborder="0"
+            style="width:90%;height:80vh;border-radius:16px;box-shadow:0 4px 32px rgba(162,89,247,0.15);background:#fff;"></iframe>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggle = document.getElementById('tools-toggle');
+            const menu = document.getElementById('tools-menu');
+            const sidebar = document.getElementById('osu-navbar');
+            const main = document.getElementById('osu-main');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebarToggleIcon = document.getElementById('sidebar-toggle-icon');
+            let collapsed = false;
+
+            function showMenu() {
+                menu.classList.add('show');
+            }
+
+            function hideMenu() {
+                menu.classList.remove('show');
+            }
+
+            toggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (sidebar.classList.contains('collapsed')) return;
+                if (!menu.classList.contains('show')) {
+                    showMenu();
+                    toggle.classList.add('active');
+                } else {
+                    hideMenu();
+                    toggle.classList.remove('active');
+                }
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+                    hideMenu();
+                    toggle.classList.remove('active');
+                }
+            });
+
+            sidebarToggle.addEventListener('click', function () {
+                collapsed = !collapsed;
+                sidebar.classList.toggle('collapsed', collapsed);
+                main.classList.toggle('collapsed', collapsed);
+                sidebarToggleIcon.innerHTML = collapsed ? '&#10095;' : '&#9776;';
+                hideMenu();
+                toggle.classList.remove('active');
+            });
+        });
+    </script>
+    <div id="news-feed"></div>
+</body>
+
+</html>
