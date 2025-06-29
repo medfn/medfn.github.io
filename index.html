@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>med74 | Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="./content/icon.ico">
+    <script src="main.js"></script>
+</head>
+
+<body>
+
+    <hr class="hr">
+    </hr>
+
+    <div id="nav">
+        <div id="title">
+            - med74 -
+        </div>
+        <div class="void"></div>
+        <!-- <a class="link" href="projects.html" target="_blank">Projects</a> -->
+        <a class="link" href="http://osu.med74.rf.gd/" target="_blank">osu! section</a>
+    </div>
+
+    <hr class="hr">
+    </hr>
+
+    <div id="content">
+        <p class="subtitle">Homepage</p>
+        <p class="text">hi i am med74</p>
+        <p>i do stuff.</p>
+        <div class="patata">
+            <img src="./content/patata.jpg" alt="med74">
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="box-grey">
+            <p class="subtitle">Services</p>
+            <div class="container2">
+                <div class="project1">
+                    <a class="card" target="_blank" href="https://osu.med74.rf.gd/scheduler.html">
+                        <img src="./content/cards/osu default scheduler.png" alt="osu! Default Scheduler card">
+                        <p class="card-caption">Default Scheduler</p>
+                    </a>
+                </div>
+                <div class="project2"></div>
+                <div class="project3"></div>
+                <div class="project4"></div>
+            </div>
+        </div>
+        <div class="box-grey">
+            <div id="links">
+                <a class="link" target="_blank" href="https://github.com/medfn">
+                    <img class="icon" src="./content/icons/github.png" alt="GitHub Icon">
+                    <!-- <p>GitHub</p> -->
+                </a>
+                <a class="link" target="_blank" href="https://www.instagram.com/notmedfn/">
+                    <img class="icon" src="./content/icons/instagram.png" alt="Instagram Icon">
+                    <!-- <p>Instagram</p> -->
+                </a>
+                <a class="link" target="_blank" href="https://www.youtube.com/@MedFN">
+                    <img class="icon" src="./content/icons/youtube.png" alt="YouTube Icon">
+                    <!-- <p>YouTube</p> -->
+                </a>
+                <a class="link" target="_blank" href="https://www.twitch.tv/medfn7">
+                    <img class="icon" src="./content/icons/twitch.png" alt="Twitch Icon">
+                    <!-- <p>Twitch</p> -->
+
+                </a>
+                <script>
+                    function copyDiscord() {
+                        const discordUsername = "medfouna";
+                        navigator.clipboard.writeText(discordUsername).then(() => {
+                            showNews("Discord username copied to clipboard!");
+                        }).catch(err => {
+                            console.error('Failed to copy: ', err);
+                        });
+                    }
+                    // function for news/announcement/notification
+                    function showNews(message) {
+                        let newsFeed = document.getElementById('news-feed');
+                        newsFeed.textContent = message;
+                        newsFeed.classList.add('show');
+                        setTimeout(() => {
+                            newsFeed.classList.remove('show');
+                        }, 2000); // Show for 2 seconds, then fade out
+                    }
+                </script>
+                <a class="link" onclick="copyDiscord(); return false;">
+                    <img class="icon" src="./content/icons/discord.png" alt="Click to Copy Discord Username">
+                    <!-- <p>Discord</p> -->
+                </a>
+                <a class="link" target="_blank" onclick="showNews('not quiet there yet :)'); return false;">
+                    <img class="icon" src="./content/icons/linkedin.png" alt="still WIP">
+                    <!-- <p>LinkedIn</p> -->
+                </a>
+                <a class="link" target="_blank" href="https://ko-fi.com/medfouna">
+                    <img class="icon" src="./content/icons/kofi.png" alt="Ko-fi Icon">
+                    <!-- <p>Ko-fi</p> -->
+                </a>
+                <a class="link" target="_blank" href="https://osu.ppy.sh/users/29161604">
+                    <img class="icon" src="./content/icons/osu.png" alt="osu Icon">
+                    <!-- <p>osu</p> -->
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <hr class="hr">
+    </hr>
+    <div id="footer">
+        <p>© med74 | 2024</p>
+        <p>・</p>
+        <p>Created by <a href="https://github.com/medfn">medfn</a></p>
+        <p>・</p>
+        <p>Last updated: 06/08/2024</p>
+    </div>
+    <hr class="hr">
+    </hr>
+    <div id="news-feed"></div>
+</body>
+
+</html>
