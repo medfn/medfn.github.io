@@ -10,18 +10,42 @@
             text-align: center;
             margin: 50px;
         }
-        a {
-            color: #007bff;
+        a, .button-link {
+            color: #fff;
             text-decoration: none;
         }
-        a:hover {
-            text-decoration: underline;
+        .button-link {
+            display: inline-block;
+            background-color: #007bff;
+            padding: 10px 24px;
+            border-radius: 5px;
+            margin: 10px 5px;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        .button-link:hover {
+            background-color: #0056b3;
+        }
+        .download-button {
+            background-color: #28a745;
+        }
+        .download-button:hover {
+            background-color: #1e7e34;
         }
         h1 {
             color: #333;
         }
         p {
             color: #555;
+        }
+        .hyper-link {
+            color: #007bff;
+            text-decoration: none;
+            display: block;
+            margin-top: 10px;
+        }
+        .hyper-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -30,6 +54,8 @@
     <hr>
     <p>this is an exe file made by me, used to mass download beatmaps from osu! website or other api end points (mirror sites)
     here is the github repository:</p> 
-    <a href="https://github.com/medfn/osu-mappack-downloader" target="_blank">osu-mappack-downloader</a>
+    <a href="https://github.com/medfn/osu-mappack-downloader" class="button-link" target="_blank">GitHub Repository</a>
+    <a href="https://github.com/medfn/osu-mappack-downloader/releases/latest" class="button-link download-button" target="_blank">Download Latest Version</a>
+    <a href="https://github.com/medfn/osu-mappack-downloader/releases" class="hyper-link" target="_blank">View previous releases</a>
 </body>
 </html>
