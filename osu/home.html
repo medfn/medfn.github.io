@@ -6,141 +6,265 @@
     <title>osu! med74 | Home</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #181c24;
+            color: #e9e9f4;
             margin: 0;
-            padding: 20px;
-            text-align: center;
+            padding: 0;
+            min-height: 100vh;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #d4d4d4;
+            margin: 36px auto;
+            width: 96%;
+            max-width: 950px;
         }
         h1 {
             color: #ff66b2;
+            font-size: 2.7em;
+            margin-top: 36px;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        .section-title {
+            color: #fff;
+            background: linear-gradient(90deg, #ff66b2 60%, #6ec6ff 100%);
+            padding: 20px 0 18px 0;
+            font-size: 2.3em;
+            border-radius: 14px;
+            margin: 48px auto 32px auto;
+            width: 96%;
+            max-width: 950px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.13);
+            letter-spacing: 2px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .section-title.tournaments {
+            /* Inverted gradient for tournaments */
+            background: linear-gradient(90deg, #6ec6ff 60%, #ff66b2 100%);
+            color: #fff;
         }
         .cards-container {
             display: flex;
-            gap: 20px;
+            gap: 36px;
             justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
         }
         .card {
-            background-color: white;
-            border-radius: 8px;
-            padding: 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            width: 350px;
+            background: #23283a;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+            width: 600px;
+            min-width: 600px;
+            max-width: 600px;
+            height: 290px;
             display: flex;
             flex-direction: column;
             align-items: stretch;
             overflow: hidden;
+            transition: box-shadow 0.18s;
         }
         .card-title {
-            background-color: #ff66b2;
+            background: linear-gradient(90deg, #ff66b2 60%, #6ec6ff 100%);
             color: #fff;
-            padding: 16px 0;
-            font-size: 1.25em;
+            padding: 0;
+            font-size: 1.7em; /* Bigger text */
             font-weight: bold;
+            text-align: center;
+            letter-spacing: 1.5px;
+            border-bottom: 2px solid #ffb6e6;
+            box-shadow: 0 2px 8px rgba(255,102,178,0.08);
+            height: 65px; /* More height for visibility */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 2px 8px rgba(110,198,255,0.12), 0 1px 1px #181c24;
         }
         .card-content-row {
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
-            gap: 16px;
+            justify-content: flex-start;
+            padding: 0 18px 0 0;
+            gap: 18px;
+            flex: 1;
+            height: 200px;
         }
         .card-image {
-            flex: 0 0 100px;
+            flex: 0 0 350px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
+            height: 200px;
+            margin-left: 0;
         }
         .card-image img {
-            width: 100px;
-            height: auto;
-            border-radius: 6px;
+            width: 350px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            background: #222;
+            border: 3px solid #ff66b2;
+            display: block;
+            margin-left: 0;
         }
         .card-text {
             flex: 1;
+            min-width: 200px;
+            max-width: 220px;
             text-align: left;
-            color: #666;
+            color: #c7c7e6;
+            font-size: 1.13em;
+            padding-left: 0;
+            padding-right: 0;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            display: flex;
+            align-items: center;
+            height: 100%;
         }
         .card-link-btn {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 100%;
-            background-color: #ff66b2;
-            color: #fff;
+            background: linear-gradient(90deg, #6ec6ff 60%, #ff66b2 100%);
+            color: #181c24;
             border: none;
-            border-radius: 0 0 8px 8px;
-            padding: 14px 0;
-            font-size: 1em;
+            border-radius: 0 0 16px 16px;
+            padding: 0;
+            height: 55px; /* More height for button */
+            font-size: 1.18em;
             font-weight: bold;
             cursor: pointer;
             text-decoration: none;
-            transition: background 0.2s;
+            letter-spacing: 1.5px;
+            transition: background 0.2s, color 0.2s, font-size 0.2s;
+            box-shadow: 0 2px 8px rgba(110,198,255,0.08);
+            margin-top: auto;
+            text-align: center;
         }
-        .card-link-btn:hover {
-            background-color: #e0559e;
+        .card-link-btn span {
+            width: 100%;
+            text-align: center;
+            display: block;
+            transition: all 0.2s ease-in-out;
         }
-        /* Responsive for mobile */
-        @media (max-width: 800px) {
+        .card-link-btn:hover, .card-link-btn:focus {
+            background: linear-gradient(90deg, #ff66b2 60%, #6ec6ff 100%);
+            color: #fff;
+        }
+        .card-link-btn:hover span, .card-link-btn:focus span {
+            font-size: 1.12em; /* Slightly bigger, not too much */
+            
+        }
+        .tournaments-section {
+            margin-top: 56px;
+            margin-bottom: 38px;
+            text-align: center;
+        }
+        .tournaments-section h2 {
+            color: #6ec6ff;
+            font-size: 2.1em;
+            margin-bottom: 14px;
+            letter-spacing: 1.2px;
+        }
+        .tournaments-section p {
+            color: #c7c7e6;
+            font-size: 1.13em;
+        }
+        .tournaments-section a {
+            color: #ff66b2;
+            text-decoration: underline;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+        .tournaments-section a:hover {
+            color: #6ec6ff;
+        }
+        @media (max-width: 900px) {
             .cards-container {
                 flex-direction: column;
                 align-items: center;
             }
-            .card-content-row {
-                flex-direction: column;
-                gap: 10px;
+            .card {
+                width: 98vw;
+                min-width: 0;
+                max-width: 100vw;
             }
             .card-image img {
-                width: 80px;
+                width: 60vw;
+                max-width: 350px;
+                height: 120px;
             }
-        }
-        /* Center headings and paragraphs */
-        h2, p {
-            text-align: center;
-        }
-        .tournaments-section {
-            text-align: center;
+            .card-content-row {
+                flex-direction: column;
+                height: auto;
+                gap: 8px;
+                padding: 0 8px 0 0;
+            }
+            .card-text {
+                max-width: 100vw;
+                min-width: 0;
+                text-align: center;
+                padding: 0 8px;
+            }
+            .card-title {
+                font-size: 1.3em;
+                height: 48px;
+            }
+            .card-link-btn {
+                height: 48px;
+            }
         }
     </style>
 </head>
 <body>
     <h1>Welcome to osu! med74</h1>
-    <p>This is the home page for osu! section of med74's website.</p>
-    <p>You can find tools, infos and other stuff related to osu! game.</p>
-    <div>
-        <h2>My tools</h2>
-        <div class="cards-container">
-            <div class="card">
-                <div class="card-title">osu! Beatmap Downloader</div>
-                <div class="card-content-row">
-                    <div class="card-image">
-                        <img src="/content/cards/obd.png" alt="osu! Beatmap Downloader">
-                    </div>
-                    <div class="card-text">
-                        Download multiple osu! beatmaps at once and pack them up into mappacks easily
-                    </div>
+    <p style="color:#c7c7e6;font-size:1.18em;margin-bottom:36px;text-align:center;">
+        This is the home page for the osu! section of med74's website.<br>
+        You can find tools, info, and other stuff related to osu! here.
+    </p>
+    <hr>
+    <div class="section-title">My Tools</div>
+    <div class="cards-container">
+        <div class="card">
+            <div class="card-title">osu! Beatmap Downloader</div>
+            <div class="card-content-row">
+                <div class="card-image">
+                    <img src="/content/cards/obd.png" alt="osu! Beatmap Downloader">
                 </div>
-                <a href="/osu/obd-github.html" class="card-link-btn">Go to Beatmap Downloader</a>
-            </div>
-            <div class="card">
-                <div class="card-title">Tournament default match time scheduler</div>
-                <div class="card-content-row">
-                    <div class="card-image">
-                        <img src="/content/cards/osu default scheduler.png" alt="osu! Default Scheduler">
-                    </div>
-                    <div class="card-text">
-                        A tool that will suggest the best possible Default match time for 2 different teams on different timezones.
-                    </div>
+                <div class="card-text">
+                    Download multiple osu! beatmaps at once and pack them up into mappacks easily.
                 </div>
-                <a href="/osu/scheduler.html" class="card-link-btn">Go to Default Scheduler</a>
             </div>
+            <a href="/osu/obd-github.html" class="card-link-btn"><span>Go to Beatmap Downloader</span></a>
+        </div>
+        <div class="card">
+            <div class="card-title">Default Match Time Scheduler</div>
+            <div class="card-content-row">
+                <div class="card-image">
+                    <img src="/content/cards/osu default scheduler.png" alt="osu! Default Scheduler">
+                </div>
+                <div class="card-text">
+                    A tool that will suggest the best possible default match time for two different teams on different timezones.
+                </div>
+            </div>
+            <a href="/osu/scheduler.html" class="card-link-btn"><span>Go to Default Scheduler</span></a>
         </div>
     </div>
     <hr>
+    <div class="section-title tournaments">My Tournaments</div>
     <div class="tournaments-section">
         <h2>Tournaments I've Hosted</h2>
         <p>Check out the tournaments I've hosted on my <a href="https://med74.rf.gd/tournaments.html">tournaments page</a>.</p>
     </div>
 </body>
-
 </html>
