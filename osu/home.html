@@ -43,184 +43,38 @@
             text-align: center;
         }
         .section-title.tournaments {
-            /* Inverted gradient for tournaments */
             background: linear-gradient(90deg, #6ec6ff 60%, #ff66b2 100%);
             color: #fff;
         }
-        .cards-container {
-            display: flex;
-            gap: 36px;
-            justify-content: center;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            margin-bottom: 48px;
-        }
-        .card {
-            background: #23283a;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.18);
-            width: 600px;
-            min-width: 600px;
-            max-width: 600px;
-            height: 290px;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            overflow: hidden;
-            transition: box-shadow 0.18s;
-        }
-        .card-title {
-            background: linear-gradient(90deg, #ff66b2 60%, #6ec6ff 100%);
-            color: #fff;
-            padding: 0;
-            font-size: 1.7em; /* Bigger text */
-            font-weight: bold;
-            text-align: center;
-            letter-spacing: 1.5px;
-            border-bottom: 2px solid #ffb6e6;
-            box-shadow: 0 2px 8px rgba(255,102,178,0.08);
-            height: 65px; /* More height for visibility */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-shadow: 0 2px 8px rgba(110,198,255,0.12), 0 1px 1px #181c24;
-        }
-        .card-content-row {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 0 18px 0 0;
-            gap: 18px;
-            flex: 1;
-            height: 200px;
-        }
-        .card-image {
-            flex: 0 0 350px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            height: 200px;
-            margin-left: 0;
-        }
-        .card-image img {
-            width: 350px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 0; /* Remove rounded corners */
-            background: #222;
-            /* Only vertical borders */
-            border-left: 4px solid #ff66b2;
-            border-right: 4px solid #6ec6ff;
-            border-top: none;
-            border-bottom: none;
-            display: block;
-            margin-left: 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-        }
-        .card-text {
-            flex: 1;
-            min-width: 200px;
-            max-width: 220px;
-            text-align: left;
-            color: #c7c7e6;
-            font-size: 1.13em;
-            padding-left: 0;
-            padding-right: 0;
-            word-break: break-word;
-            overflow-wrap: break-word;
-            hyphens: auto;
-            display: flex;
-            align-items: center;
-            height: 100%;
-        }
-        .card-link-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            background: linear-gradient(90deg, #6ec6ff 0%, #ff66b2 100%);
-            color: #fff;
-            border: none;
-            border-radius: 0 0 16px 16px;
-            padding: 0;
-            height: 55px;
-            font-size: 1.18em;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            letter-spacing: 1.5px;
-            transition: 
-                background 0.2s, 
-                color 0.2s, 
-                font-size 0.2s, 
-                box-shadow 0.2s,
-                filter 0.2s;
-            box-shadow: 0 2px 8px rgba(110,198,255,0.08);
-            margin-top: auto;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .card-link-btn::before {
-            content: "";
-            position: absolute;
-            left: -75%;
-            top: 0;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(120deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 100%);
-            transform: skewX(-20deg);
-            transition: left 0.4s cubic-bezier(.4,0,.2,1);
-            z-index: 0;
-        }
-        .card-link-btn:hover::before,
-        .card-link-btn:focus::before {
-            left: 120%;
-        }
-        .card-link-btn span {
-            width: 100%;
-            text-align: center;
-            display: block;
-            transition: font-size 0.2s, filter 0.2s;
-            position: relative;
-            z-index: 1;
-            filter: drop-shadow(0 2px 8px #6ec6ff33);
-        }
-        .card-link-btn:hover, .card-link-btn:focus {
-            background: linear-gradient(90deg, #ff66b2 0%, #6ec6ff 100%);
-            color: #fff;
-            box-shadow: 0 4px 16px #ff66b244;
-            filter: brightness(1.07);
-        }
-        .card-link-btn:hover span, .card-link-btn:focus span {
-            font-size: 1.13em;
-            filter: drop-shadow(0 2px 12px #ff66b2cc);
-        }
+        /* Tournament section text styling */
         .tournaments-section {
-            margin-top: 56px;
-            margin-bottom: 38px;
+            margin: 48px auto 0 auto;
             text-align: center;
         }
         .tournaments-section h2 {
             color: #6ec6ff;
-            font-size: 2.1em;
-            margin-bottom: 14px;
-            letter-spacing: 1.2px;
+            font-size: 2.3em;
+            font-weight: bold;
+            margin-bottom: 12px;
+            margin-top: 0;
+            letter-spacing: 1.5px;
         }
         .tournaments-section p {
-            color: #c7c7e6;
-            font-size: 1.13em;
+            color: #e9e9f4;
+            font-size: 1.25em;
+            margin: 0 auto 24px auto;
         }
         .tournaments-section a {
             color: #ff66b2;
-            text-decoration: underline;
             font-weight: bold;
-            transition: color 0.2s;
+            text-decoration: underline;
+            transition: color 0.18s;
         }
-        .tournaments-section a:hover {
+        .tournaments-section a:hover,
+        .tournaments-section a:focus {
             color: #6ec6ff;
         }
+        /* Carousel styles */
         .tools-carousel-wrapper {
             position: relative;
             width: 100%;
@@ -258,7 +112,7 @@
             top: 0;
             bottom: 0;
             z-index: 3;
-            background: rgba(24,28,36,0.7);
+            background: transparent;
             border: none;
             border-radius: 16px;
             width: 70px;
@@ -266,12 +120,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
+            color: #2196f3;
             font-size: 2em;
             cursor: pointer;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.18);
-            backdrop-filter: blur(6px);
-            transition: background 0.2s, color 0.2s, opacity 0.2s;
+            box-shadow: none;
+            backdrop-filter: blur(0);
+            transition: background 0.18s, color 0.18s, opacity 0.18s;
             opacity: 0.85;
             outline: none;
             user-select: none;
@@ -279,11 +133,22 @@
         }
         .carousel-arrow.left { left: 0; }
         .carousel-arrow.right { right: 0; }
+        .carousel-arrow:hover:not(:disabled),
+        .carousel-arrow:focus-visible:not(:disabled) {
+            background: #2196f3;
+            color: #fff;
+            opacity: 1;
+        }
+        .carousel-arrow:active:not(:disabled) {
+            background: #1565c0;
+            color: #fff;
+            opacity: 1;
+        }
         .carousel-arrow:disabled {
-            background: rgba(80,80,80,0.45);
+            background: transparent;
             color: #aaa;
             cursor: not-allowed;
-            opacity: 0.5;
+            opacity: 0.3;
             pointer-events: none;
         }
         .carousel-fade {
@@ -302,6 +167,126 @@
         .carousel-fade.right {
             right: 0;
             background: linear-gradient(270deg, #181c24 80%, transparent);
+        }
+        .card {
+            background: #23283a;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+            width: 600px;
+            min-width: 600px;
+            max-width: 600px;
+            height: 290px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            overflow: hidden;
+            transition: box-shadow 0.18s;
+        }
+        .card-title {
+            background: #ff66b2; /* Solid pink */
+            color: #fff;
+            padding: 0;
+            font-size: 1.7em;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 1.5px;
+            border-bottom: 2px solid #ffb6e6;
+            box-shadow: 0 2px 8px rgba(255,102,178,0.08);
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 2px 8px rgba(110,198,255,0.12), 0 1px 1px #181c24;
+        }
+        .card-content-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 18px 0 0;
+            gap: 18px;
+            flex: 1;
+            height: 200px;
+        }
+        .card-image {
+            flex: 0 0 350px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            height: 200px;
+            margin-left: 0;
+        }
+        .card-image img {
+            width: 350px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 0;
+            background: #222;
+            border-left: 4px solid #ff66b2;
+            border-right: 4px solid #6ec6ff;
+            border-top: none;
+            border-bottom: none;
+            display: block;
+            margin-left: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+        }
+        .card-text {
+            flex: 1;
+            min-width: 200px;
+            max-width: 220px;
+            text-align: left;
+            color: #c7c7e6;
+            font-size: 1.13em;
+            padding-left: 0;
+            padding-right: 0;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        .card-link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background: #2196f3; /* Solid blue */
+            color: #fff;
+            border: none;
+            border-radius: 0 0 16px 16px;
+            padding: 0;
+            height: 55px;
+            font-size: 1.18em;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            letter-spacing: 1.5px;
+            transition: background 0.2s, color 0.2s, font-size 0.2s, box-shadow 0.2s, filter 0.2s;
+            box-shadow: 0 2px 8px rgba(110,198,255,0.08);
+            margin-top: auto;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-link-btn:hover, .card-link-btn:focus {
+            background: linear-gradient(90deg, #6ec6ff 0%, #ff66b2 100%);
+            color: #fff;
+            box-shadow: 0 4px 16px #ff66b244;
+            filter: brightness(1.07);
+        }
+        .card-link-btn span {
+            width: 100%;
+            text-align: center;
+            display: block;
+            transition: transform 0.18s, font-size 0.2s, filter 0.2s;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 2px 8px #6ec6ff33);
+        }
+        .card-link-btn:hover span,
+        .card-link-btn:focus span {
+            transform: scale(1.125);
         }
         @media (max-width: 900px) {
             .cards-container {
@@ -395,7 +380,10 @@
     <div class="section-title tournaments">My Tournaments</div>
     <div class="tournaments-section">
         <h2>Tournaments I've Hosted</h2>
-        <p>Check out the tournaments I've hosted on my <a href="https://med74.rf.gd/tournaments.html">tournaments page</a>.</p>
+        <p>
+            Check out the tournaments I've hosted on my
+            <a href="https://med74.rf.gd/tournaments.html">tournaments page</a>.
+        </p>
     </div>
     <script>
 const carousel = document.getElementById('tools-carousel');
@@ -444,7 +432,6 @@ leftBtn.onclick = (e) => scrollToCard('left', e);
 rightBtn.onclick = (e) => scrollToCard('right', e);
 
 carousel.addEventListener('scroll', updateFadeAndButtons);
-window.addEventListener('resize', updateFadeAndButtons);
 updateFadeAndButtons();
     </script>
 </body>
