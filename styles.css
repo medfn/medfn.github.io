@@ -225,14 +225,15 @@ body{
 
 .link {
     display: flex;
-    flex-direction: column; /* Stack icon and label vertically */
+    flex-direction: column;
     align-items: center;
     font-size: 1.8rem;
     font-weight: bold;
     text-decoration: none;
     color: rgb(219, 71, 71);
     transition: all 0.5s ease;
-    gap: 4px; /* Small gap between icon and label */
+    gap: 4px;
+    cursor: pointer; /* Add this line */
 }
 
 .link p {
