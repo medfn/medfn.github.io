@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Match TSV Generator (BO + TB)</title>
+<title>Match TSV Generator — Fixed</title>
 <style>
   :root{--bg:#f7f8fb;--pane:#fff;--muted:#666}
   body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;margin:18px;background:var(--bg);color:#111}
@@ -28,7 +28,7 @@
 </style>
 </head>
 <body>
-<h2>Match TSV Generator — BO / TB aware</h2>
+<h2>Match TSV Generator — Fixed</h2>
 <p class="small">Paste match data (left) or upload a .txt file (right). Configure Protects, Bans and BO; click <b>Generate</b>. FF matches are skipped entirely.</p>
 
 <div class="wrap">
@@ -66,12 +66,13 @@
       <div class="row" style="margin-top:10px">
         <button id="generateBtn">Generate TSV</button>
         <button id="previewBtn" title="Show parsed rows in a readable table">Preview</button>
+        <button id="testBtn" title="Copy a test TSV row with real tabs">Test TSV</button>
       </div>
 
       <div style="margin-top:10px">
         <label><input id="advancedToggle" type="checkbox"> Advanced settings</label>
         <div id="advancedPanel" class="advanced" style="display:none">
-          <div class="small">If you want separate 'cell slot' columns (for spreadsheet alignment) that differ from Protects/Bans counts, set them here. Usually you can leave blank to match the counts above.</div>
+          <div class="small">Cell slot overrides: if left blank, uses Protects/Bans counts above.</div>
           <div style="margin-top:6px">
             <label>Protect cell slots:
               <input id="protectSlots" type="number" value="" min="0" max="12" placeholder="default = Protects" />
@@ -108,48 +109,41 @@ function splitTokens(s){
   if(!s) return [];
   return s.split(/[\|\t,;]+/).map(uppercaseToken).filter(Boolean);
 }
-function safeText(s){ return String(s===null||s===undefined?'':s); }
 
 /* ---------- Extraction helpers ---------- */
 function extractMPID(block){
+  // try MP ID line then fallback to any long number
   const m1 = block.match(/MP ID\s*[:\s]*([0-9]{4,12})/i);
   if(m1) return m1[1];
-  // fallback: any 6+ digit number that looks like an ID
   const m2 = block.match(/\b([0-9]{6,12})\b/);
   return m2 ? m2[1] : '';
 }
 
 function extractSectionLines(block, key){
-  // match lines under a header like "Bans" until next header word or end
   const pattern = new RegExp('^\\s*' + key + '\\s*[\\r\\n]+([\\s\\S]*?)(?=\\n\\s*\\w+\\s|\\n\\s*\\w+:|$)', 'im');
   const m = block.match(pattern);
   if(m) return m[1].trim();
-  // single-line fallback: "Bans ...\n"
   const single = block.match(new RegExp(key + '\\s*[:\\s]*([\\|\\w\\d,\\s-]*)', 'i'));
   return single ? single[1].trim() : '';
 }
 
 function extractScore(block){
-  // Find Score then two numbers OR "FF"
-  const scorePattern = /Score\s*[:\s]*([\d]+)\s*[\r\n]+\s*([\d]+)|Score\s*[:\s]*([0-9]+)\s*[:]\s*([0-9]+)|Score\s*[:\s]*([0-9]+)\s*-\s*([0-9]+)/i;
-  const m = block.match(scorePattern);
-  if(m){
-    // pick first two numeric groups that exist
-    const nums = m.slice(1).filter(v=>v && /^\d+$/.test(v)).slice(0,2).map(Number);
-    if(nums.length===2) return nums;
-  }
-  // fallback: find two numbers near each other on separate lines after 'Score' word
+  // match several score forms: "Score\n5\n4", "Score 5 4", "Score 5:4", "Score 5-4"
+  let m = block.match(/Score\s*[:\s]*\n*\s*([0-9]+)\s*[\r\n]+\s*([0-9]+)/i);
+  if(m) return [Number(m[1]), Number(m[2])];
+  m = block.match(/Score\s*[:\s]*\s*([0-9]+)\s*[:\-\s]\s*([0-9]+)/i);
+  if(m) return [Number(m[1]), Number(m[2])];
+  // fallback: near 'Score' word pick two numbers
   const idx = block.search(/Score/i);
-  if(idx>=0){
-    const tail = block.slice(idx, idx+100);
-    const numMatches = tail.match(/\d+/g);
-    if(numMatches && numMatches.length>=2) return [Number(numMatches[0]), Number(numMatches[1])];
+  if(idx >= 0){
+    const tail = block.slice(idx, idx + 120);
+    const ns = tail.match(/\d+/g);
+    if(ns && ns.length >= 2) return [Number(ns[0]), Number(ns[1])];
   }
   return null;
 }
 
 function hasFF(block){
-  // Score contains FF (some inputs show "Score\n0\nFF")
   return /\bFF\b/i.test(block) && /Score/i.test(block);
 }
 
@@ -164,15 +158,12 @@ function findRoundKeywords(text){
 /* ---------- Parse single block ---------- */
 function parseMatchBlock(block){
   if(!block || !block.trim()) return null;
-  // Skip FF entirely
-  if(hasFF(block)) return null;
+  if(hasFF(block)) return null; // skip FF entirely
   const mpid = extractMPID(block);
-  if(!mpid) return null; // skip if no mpid found
-  // Extract sections
+  if(!mpid) return null;
   const protectsRaw = extractSectionLines(block,'Protects') || '';
   const bansRaw = extractSectionLines(block,'Bans') || '';
   let picksRaw = extractSectionLines(block,'Picks') || '';
-  // If picks empty, attempt to extract lines with '|' or tokens
   if(!picksRaw){
     const lines = block.split(/[\r\n]+/).map(l=>l.trim()).filter(Boolean);
     const pickLines = lines.filter(l=> l.includes('|') || /[A-Za-z]{2,}\d/.test(l));
@@ -180,75 +171,67 @@ function parseMatchBlock(block){
   }
   const protects = splitTokens(protectsRaw);
   const bans = splitTokens(bansRaw);
-  // picks may be multi-line: join lines then split
   const picksLines = picksRaw.split(/[\r\n]+/).map(l=>l.trim()).filter(Boolean);
   let picks = [];
   for(const pl of picksLines) picks = picks.concat(splitTokens(pl));
-  // extract score (for TB auto-detection)
-  const score = extractScore(block); // returns [a,b] or null
+  const score = extractScore(block);
   return { mpid, protects, bans, picks, score, raw:block };
 }
 
 /* ---------- Row formatting ---------- */
 function formatRow(match, protectSlots, banSlots, forceTB, autoTB, bo, strictValidate){
   const out = [match.mpid];
-  // write protect slots
   for(let i=0;i<protectSlots;i++) out.push(match.protects[i] || '');
-  // bans
   for(let i=0;i<banSlots;i++) out.push(match.bans[i] || '');
 
-  // picks normalize & optionally validate
   let picks = match.picks.map(uppercaseToken);
-  // auto TB detection from score + BO
+
+  // Auto TB detection
   if(autoTB && match.score && bo && bo>0){
     const a = match.score[0], b = match.score[1];
     const mx = Math.max(a,b), mn = Math.min(a,b);
     const winThreshold = Math.ceil(bo/2);
-    // user rule: TB if max == winThreshold && min == winThreshold-1  OR max > winThreshold
     if((mx === winThreshold && mn === winThreshold - 1) || mx > winThreshold){
       if(!picks.some(p => /^TB\d+/i.test(p))) picks.push('TB1');
     }
   }
-  // force TB
   if(forceTB && !picks.some(p => /^TB\d+/i.test(p))) picks.push('TB1');
 
-  // strict validation (AA1)
   if(strictValidate){
     picks = picks.map(tok=>{
       const t = uppercaseToken(tok);
       if(!t) return '';
       if(/^TB\d+$/i.test(t)) return t;
-      // allow 2+ letters followed by 1-2 digits (rare 2-digit)
       if(/^[A-Z]{2,}\d{1,2}$/.test(t)) return t;
-      // sanitize fallback
-      const filtered = t.replace(/[^A-Z0-9]/g,'');
-      return filtered;
+      return t.replace(/[^A-Z0-9]/g,'');
     }).filter(Boolean);
   }
   out.push(...picks);
-  return out.join('\t');
+  return out.join('\t'); // IMPORTANT: real tab char
 }
 
-/* ---------- Main UI logic ---------- */
+/* ---------- Block splitting ---------- */
+function splitIntoBlocks(txt){
+  if(!txt || !txt.trim()) return [];
+  // try to split by headers (keep each header-starting block)
+  const re = /(?=(?:\bRound of\b|\bQuarterfinals\b|\bSemifinals\b|\bFinals\b|\bGrand Finals\b|\bGrandfinals\b|\bQF\b|\bSF\b))/ig;
+  const parts = txt.split(re).map(s=>s.trim()).filter(Boolean);
+  if(parts.length > 1) return parts;
+  // if not, try splitting by blank lines
+  const alt = txt.split(/[\r\n]{2,}/).map(s=>s.trim()).filter(Boolean);
+  if(alt.length > 1) return alt;
+  // final fallback: whole text is a single block
+  return [txt.trim()];
+}
 
+/* ---------- UI ---------- */
 const generateBtn = document.getElementById('generateBtn');
 const copyBtn = document.getElementById('copyBtn');
 const previewBtn = document.getElementById('previewBtn');
+const testBtn = document.getElementById('testBtn');
 const warningArea = document.getElementById('warningArea');
 
 function updateWarning(text){ warningArea.innerHTML = text ? '<div class="warn">'+text+'</div>' : ''; }
-
-function splitIntoBlocks(txt){
-  // try to split by round headers first (keeps header lines)
-  const re = /(?=(?:\bRound of\b|\bQuarterfinals\b|\bSemifinals\b|\bFinals\b|\bGrand Finals\b|\bGrandfinals\b|\bQF\b|\bSF\b))/ig;
-  const parts = txt.split(re).map(s=>s.trim()).filter(Boolean);
-  // if this produced 1 and the text seems long, fallback to double-newline split
-  if(parts.length === 1){
-    const alt = txt.split(/[\r\n]{2,}/).map(s=>s.trim()).filter(Boolean);
-    return alt.length ? alt : parts;
-  }
-  return parts;
-}
 
 generateBtn.addEventListener('click', () => {
   const txt = document.getElementById('inputText').value || '';
@@ -259,38 +242,38 @@ generateBtn.addEventListener('click', () => {
   const autoTB = document.getElementById('autoTB').checked;
   const strictValidate = document.getElementById('strictValidate').checked;
 
-  // advanced slots override if present
   const advProtect = document.getElementById('protectSlots').value;
   const advBan = document.getElementById('banSlots').value;
   const protectSlots = advProtect ? Math.max(0,Math.min(12,parseInt(advProtect,10))) : protectCount;
   const banSlots = advBan ? Math.max(0,Math.min(12,parseInt(advBan,10))) : banCount;
 
-  // split into blocks
   const blocks = splitIntoBlocks(txt);
-  // detect distinct round types in the whole text
   const foundRounds = findRoundKeywords(txt);
   updateWarning(foundRounds.length > 1 ? 'Warning: multiple round types detected in this input — make sure you intended to parse several rounds at once.' : '');
 
   const rows = [];
   for(const b of blocks){
     const parsed = parseMatchBlock(b);
-    if(!parsed) continue; // skip FF or unmatched
+    if(!parsed) continue;
     const row = formatRow(parsed, protectSlots, banSlots, forceTB, autoTB, bo, strictValidate);
     rows.push(row);
   }
   document.getElementById('output').textContent = rows.join('\n') || '(no matches parsed)';
 });
 
+/* Copy handler - ensures real tabs/newlines */
 copyBtn.addEventListener('click', async () => {
-  const out = document.getElementById('output').textContent;
+  let out = document.getElementById('output').textContent || '';
   if(!out || out.startsWith('(no matches')) return alert('Nothing to copy');
+  // Replace any accidental literal backslash sequences with real chars
+  out = out.replace(/\\t/g, '\t').replace(/\\n/g, '\n');
   try {
     await navigator.clipboard.writeText(out);
-    alert('Copied TSV to clipboard — paste into Google Sheets (first cell).');
+    alert('Copied TSV (with real tabs) to clipboard — select a cell (not edit mode) and paste into Google Sheets.');
   } catch(e){ alert('Copy failed: ' + e); }
 });
 
-/* preview: show parsed rows in readable format (small) */
+/* Preview button */
 previewBtn.addEventListener('click', () => {
   const txt = document.getElementById('inputText').value || '';
   const blocks = splitIntoBlocks(txt);
@@ -301,10 +284,20 @@ previewBtn.addEventListener('click', () => {
       rows.push(`MP:${parsed.mpid}  Score:${parsed.score?parsed.score.join('-'):'?'}  Protects:${parsed.protects.join(',')||'-'}  Bans:${parsed.bans.join(',')||'-'}  Picks:${parsed.picks.join(',')||'-'}`);
     }
   }
-  alert(rows.join('\\n\\n'));
+  alert(rows.join('\n\n'));
 });
 
-/* file upload handler (client only) */
+/* Test TSV - copies a proper TSV with real tabs so you can verify paste behavior */
+testBtn.addEventListener('click', async () => {
+  const testRow = ['118594008','NM3','NM4','HR2','NM2','DT3','HR3','DT1','HR1','HD1','NM1','HD3','HD2','NM5','FM2','FM3','NM6','TB1'];
+  const testTSV = testRow.join('\t');
+  try{
+    await navigator.clipboard.writeText(testTSV);
+    alert('Test TSV copied (real tabs). Paste into Google Sheets (select a cell, do NOT double-click the cell).');
+  }catch(e){ alert('Copy failed: '+e); }
+});
+
+/* File upload handler */
 document.getElementById('fileInput').addEventListener('change', (ev) => {
   const f = ev.target.files[0];
   if(!f) return;
