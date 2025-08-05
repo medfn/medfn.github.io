@@ -3,14 +3,15 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Match TSV Generator — Fixed</title>
+<title>Match TSV Generator — MPID-based split</title>
 <style>
   :root{--bg:#f7f8fb;--pane:#fff;--muted:#666}
+  *{box-sizing:border-box}
   body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;margin:18px;background:var(--bg);color:#111}
   h2{margin:0 0 6px}
-  .wrap{display:flex;gap:18px;align-items:flex-start}
+  .wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
   .pane{flex:1;background:var(--pane);border:1px solid #e7eaf3;padding:12px;border-radius:8px;min-width:260px;box-shadow:0 1px 6px rgba(10,20,40,0.04)}
-  textarea{width:100%;min-height:300px;font-family:monospace;padding:10px;border-radius:6px;border:1px solid #ddd}
+  textarea{width:100%;min-height:300px;max-height:520px;overflow:auto;font-family:monospace;padding:10px;border-radius:6px;border:1px solid #ddd;resize:vertical}
   .divider{width:2px;background:linear-gradient(#e6e9f2,#e6e9f2);border-radius:2px;align-self:stretch}
   .controls{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   label{display:inline-flex;gap:6px;align-items:center}
@@ -20,40 +21,41 @@
   button:active{transform:translateY(1px)}
   .warn{background:#fff4e5;border:1px solid #ffd08a;padding:8px;border-radius:6px;color:#5a3e00;margin-top:10px}
   .outwrap{margin-top:12px}
-  .outbox{width:100%;min-height:160px;padding:10px;border-radius:6px;border:1px solid #ccc;background:#fcfdff;white-space:pre-wrap;font-family:monospace}
+  .outbox{width:100%;min-height:160px;padding:10px;border-radius:6px;border:1px solid #ccc;background:#fcfdff;white-space:pre-wrap;font-family:monospace;overflow:auto}
   .row{display:flex;gap:8px;align-items:center}
   .copybtn{display:inline-flex;align-items:center;gap:6px}
   .small{font-size:13px;color:var(--muted)}
   .advanced{margin-top:8px;border-top:1px dashed #e6e9f2;padding-top:10px}
+  .debug{background:#fff;padding:10px;border-radius:6px;border:1px solid #e0e6f0;max-height:240px;overflow:auto;font-family:monospace}
 </style>
 </head>
 <body>
-<h2>Match TSV Generator — Fixed</h2>
-<p class="small">Paste match data (left) or upload a .txt file (right). Configure Protects, Bans and BO; click <b>Generate</b>. FF matches are skipped entirely.</p>
+<h2>Match TSV Generator — MPID-based split</h2>
+<p class="small">Paste raw match blocks on the left or upload a .txt. Use <b>Preview JSON</b> to verify parser results before copying TSV.</p>
 
 <div class="wrap">
-  <div class="pane">
+  <div class="pane" style="flex:1 1 60%">
     <h4>Paste raw match text</h4>
     <textarea id="inputText" placeholder="Paste match blocks here (one or many)"></textarea>
   </div>
 
-  <div class="divider"></div>
+  <div class="divider" style="margin-top:12px"></div>
 
-  <div class="pane">
+  <div class="pane" style="flex:1 1 35%">
     <h4>Upload .txt</h4>
     <input id="fileInput" type="file" accept=".txt,text/plain" />
-    <div class="small" style="margin-top:8px">File is read as plain text client-side only. No upload to server.</div>
+    <div class="small" style="margin-top:8px">File is read client-side only. No upload to server.</div>
 
     <div class="controls" style="margin-top:12px;flex-direction:column;align-items:flex-start">
       <div class="row">
-        <label>Protects:
+        <label>Total protects (per team):
           <input id="protectCount" type="number" value="4" min="0" max="8" />
         </label>
-        <label>Bans:
+        <label>Total bans (per team):
           <input id="banCount" type="number" value="4" min="0" max="8" />
         </label>
         <label>BO:
-          <input id="boCount" type="number" value="9" min="1" max="99" />
+          <input id="boCount" type="number" value="13" min="1" max="99" />
         </label>
       </div>
 
@@ -64,21 +66,22 @@
       </div>
 
       <div class="row" style="margin-top:10px">
+        <button id="previewJsonBtn">Preview JSON</button>
         <button id="generateBtn">Generate TSV</button>
-        <button id="previewBtn" title="Show parsed rows in a readable table">Preview</button>
+        <button id="copyBtn" title="Copy to clipboard">📋 Copy</button>
         <button id="testBtn" title="Copy a test TSV row with real tabs">Test TSV</button>
       </div>
 
       <div style="margin-top:10px">
         <label><input id="advancedToggle" type="checkbox"> Advanced settings</label>
-        <div id="advancedPanel" class="advanced" style="display:none">
-          <div class="small">Cell slot overrides: if left blank, uses Protects/Bans counts above.</div>
+        <div id="advancedPanel" class="advanced" style="display:block">
+          <div class="small">Cell slot overrides (defaults 4). They control the number of empty columns for protects/bans.</div>
           <div style="margin-top:6px">
             <label>Protect cell slots:
-              <input id="protectSlots" type="number" value="" min="0" max="12" placeholder="default = Protects" />
+              <input id="protectSlots" type="number" value="4" min="0" max="12" />
             </label>
             <label>Ban cell slots:
-              <input id="banSlots" type="number" value="" min="0" max="12" placeholder="default = Bans" />
+              <input id="banSlots" type="number" value="4" min="0" max="12" />
             </label>
           </div>
         </div>
@@ -93,80 +96,87 @@
 <div class="outwrap">
   <div class="row" style="justify-content:space-between;align-items:center">
     <h4>Output (TSV for Google Sheets)</h4>
-    <div>
-      <button id="copyBtn" class="copybtn" title="Copy to clipboard">📋 Copy</button>
-    </div>
+    <div class="small">Select one cell (single click) in Google Sheets then <kbd>Ctrl+V</kbd>.</div>
   </div>
   <div id="output" class="outbox" contenteditable="false"></div>
 </div>
 
-<script>
-/* ---------- Utilities ---------- */
-const keywords = ['Round of','Quarterfinals','Semifinals','Finals','Grand Finals','Grandfinals','GF','QF','SF'];
+<h4 style="margin-top:18px">Debug / Parser preview (JSON)</h4>
+<div id="debug" class="debug">(press Preview JSON)</div>
 
+<script>
+/* utilities */
 function uppercaseToken(s){ return String(s||'').trim().toUpperCase(); }
-function splitTokens(s){
-  if(!s) return [];
-  return s.split(/[\|\t,;]+/).map(uppercaseToken).filter(Boolean);
+function splitTokens(s){ if(!s) return []; return s.split(/[\|\t,;]+/).map(uppercaseToken).filter(Boolean); }
+
+/* extract MP ID occurrences and split accordingly */
+function splitByMPID(text){
+  // find every MP ID number occurrence (prefer "MP ID" followed by digits, or any 6+ digit number)
+  const re = /MP ID\s*[:\s]*([0-9]{4,12})|([0-9]{6,12})/gi;
+  const matches = [];
+  let m;
+  while((m = re.exec(text)) !== null){
+    // pick the first captured group that matched
+    const id = m[1] || m[2];
+    if(!id) continue;
+    matches.push({ id, index: m.index });
+  }
+  if(matches.length === 0){
+    // fallback: treat entire text as one block
+    return text.trim() ? [text.trim()] : [];
+  }
+  const blocks = [];
+  for(let i=0;i<matches.length;i++){
+    const start = matches[i].index;
+    const end = (i+1 < matches.length) ? matches[i+1].index : text.length;
+    const block = text.slice(start, end).trim();
+    if(block) blocks.push(block);
+  }
+  return blocks;
 }
 
-/* ---------- Extraction helpers ---------- */
+/* section extractor */
+function extractSection(block, key){
+  const rx = new RegExp(key + '[\\s:\\-]*([\\s\\S]*?)(?=(?:\\bProtects\\b|\\bAnti-Picks\\b|\\bAnti Picks\\b|\\bBans\\b|\\bPicks\\b|\\bScore\\b|\\bRound of\\b|\\bQuarterfinals\\b|\\bSemifinals\\b|\\bFinals\\b|\\bGrand Finals\\b|$))', 'i');
+  const m = block.match(rx);
+  if(!m) return '';
+  return m[1].trim();
+}
+
+/* MPID extractor (in-block) */
 function extractMPID(block){
-  // try MP ID line then fallback to any long number
-  const m1 = block.match(/MP ID\s*[:\s]*([0-9]{4,12})/i);
-  if(m1) return m1[1];
+  const m = block.match(/MP ID\s*[:\s]*([0-9]{4,12})/i);
+  if(m) return m[1];
   const m2 = block.match(/\b([0-9]{6,12})\b/);
   return m2 ? m2[1] : '';
 }
 
-function extractSectionLines(block, key){
-  const pattern = new RegExp('^\\s*' + key + '\\s*[\\r\\n]+([\\s\\S]*?)(?=\\n\\s*\\w+\\s|\\n\\s*\\w+:|$)', 'im');
-  const m = block.match(pattern);
-  if(m) return m[1].trim();
-  const single = block.match(new RegExp(key + '\\s*[:\\s]*([\\|\\w\\d,\\s-]*)', 'i'));
-  return single ? single[1].trim() : '';
-}
-
+/* score extraction: find 'Score' and first two integers after it */
 function extractScore(block){
-  // match several score forms: "Score\n5\n4", "Score 5 4", "Score 5:4", "Score 5-4"
-  let m = block.match(/Score\s*[:\s]*\n*\s*([0-9]+)\s*[\r\n]+\s*([0-9]+)/i);
-  if(m) return [Number(m[1]), Number(m[2])];
-  m = block.match(/Score\s*[:\s]*\s*([0-9]+)\s*[:\-\s]\s*([0-9]+)/i);
-  if(m) return [Number(m[1]), Number(m[2])];
-  // fallback: near 'Score' word pick two numbers
   const idx = block.search(/Score/i);
-  if(idx >= 0){
-    const tail = block.slice(idx, idx + 120);
-    const ns = tail.match(/\d+/g);
-    if(ns && ns.length >= 2) return [Number(ns[0]), Number(ns[1])];
-  }
-  return null;
+  if(idx < 0) return null;
+  const tail = block.slice(idx, idx + 400);
+  const nums = tail.match(/\d+/g);
+  if(!nums || nums.length < 2) return null;
+  return [Number(nums[0]), Number(nums[1])];
 }
 
 function hasFF(block){
   return /\bFF\b/i.test(block) && /Score/i.test(block);
 }
 
-function findRoundKeywords(text){
-  const found = new Set();
-  for(const k of keywords){
-    if(new RegExp('\\b' + k.replace(/\s+/g,'\\s+') + '\\b','i').test(text)) found.add(k);
-  }
-  return Array.from(found);
-}
-
-/* ---------- Parse single block ---------- */
+/* parse a match block */
 function parseMatchBlock(block){
   if(!block || !block.trim()) return null;
-  if(hasFF(block)) return null; // skip FF entirely
+  if(hasFF(block)) return null; // skip FF
   const mpid = extractMPID(block);
   if(!mpid) return null;
-  const protectsRaw = extractSectionLines(block,'Protects') || '';
-  const bansRaw = extractSectionLines(block,'Bans') || '';
-  let picksRaw = extractSectionLines(block,'Picks') || '';
+  const protectsRaw = extractSection(block, 'Protects') || '';
+  const bansRaw = extractSection(block, 'Bans') || '';
+  let picksRaw = extractSection(block, 'Picks') || '';
   if(!picksRaw){
     const lines = block.split(/[\r\n]+/).map(l=>l.trim()).filter(Boolean);
-    const pickLines = lines.filter(l=> l.includes('|') || /[A-Za-z]{2,}\d/.test(l));
+    const pickLines = lines.filter(l => l.includes('|') || /[A-Za-z]{2,}\d/.test(l));
     if(pickLines.length) picksRaw = pickLines.join('|');
   }
   const protects = splitTokens(protectsRaw);
@@ -178,15 +188,12 @@ function parseMatchBlock(block){
   return { mpid, protects, bans, picks, score, raw:block };
 }
 
-/* ---------- Row formatting ---------- */
+/* format row */
 function formatRow(match, protectSlots, banSlots, forceTB, autoTB, bo, strictValidate){
   const out = [match.mpid];
   for(let i=0;i<protectSlots;i++) out.push(match.protects[i] || '');
   for(let i=0;i<banSlots;i++) out.push(match.bans[i] || '');
-
   let picks = match.picks.map(uppercaseToken);
-
-  // Auto TB detection
   if(autoTB && match.score && bo && bo>0){
     const a = match.score[0], b = match.score[1];
     const mx = Math.max(a,b), mn = Math.min(a,b);
@@ -196,7 +203,6 @@ function formatRow(match, protectSlots, banSlots, forceTB, autoTB, bo, strictVal
     }
   }
   if(forceTB && !picks.some(p => /^TB\d+/i.test(p))) picks.push('TB1');
-
   if(strictValidate){
     picks = picks.map(tok=>{
       const t = uppercaseToken(tok);
@@ -207,113 +213,90 @@ function formatRow(match, protectSlots, banSlots, forceTB, autoTB, bo, strictVal
     }).filter(Boolean);
   }
   out.push(...picks);
-  return out.join('\t'); // IMPORTANT: real tab char
+  return out.join('\t');
 }
 
-/* ---------- Block splitting ---------- */
-function splitIntoBlocks(txt){
-  if(!txt || !txt.trim()) return [];
-  // try to split by headers (keep each header-starting block)
-  const re = /(?=(?:\bRound of\b|\bQuarterfinals\b|\bSemifinals\b|\bFinals\b|\bGrand Finals\b|\bGrandfinals\b|\bQF\b|\bSF\b))/ig;
-  const parts = txt.split(re).map(s=>s.trim()).filter(Boolean);
-  if(parts.length > 1) return parts;
-  // if not, try splitting by blank lines
-  const alt = txt.split(/[\r\n]{2,}/).map(s=>s.trim()).filter(Boolean);
-  if(alt.length > 1) return alt;
-  // final fallback: whole text is a single block
-  return [txt.trim()];
-}
-
-/* ---------- UI ---------- */
+/* UI */
+const previewJsonBtn = document.getElementById('previewJsonBtn');
 const generateBtn = document.getElementById('generateBtn');
 const copyBtn = document.getElementById('copyBtn');
-const previewBtn = document.getElementById('previewBtn');
 const testBtn = document.getElementById('testBtn');
+const debugDiv = document.getElementById('debug');
+const outputDiv = document.getElementById('output');
 const warningArea = document.getElementById('warningArea');
 
 function updateWarning(text){ warningArea.innerHTML = text ? '<div class="warn">'+text+'</div>' : ''; }
 
-generateBtn.addEventListener('click', () => {
+previewJsonBtn.addEventListener('click', ()=> {
   const txt = document.getElementById('inputText').value || '';
-  const protectCount = Math.max(0, Math.min(12, parseInt(document.getElementById('protectCount').value||4,10)));
-  const banCount = Math.max(0, Math.min(12, parseInt(document.getElementById('banCount').value||4,10)));
-  const bo = Math.max(1, parseInt(document.getElementById('boCount').value||9,10));
+  const blocks = splitByMPID(txt);
+  const parsed = blocks.map(b => parseMatchBlock(b));
+  debugDiv.textContent = JSON.stringify(parsed, null, 2);
+  const multi = (parsed.filter(p => p !== null).length > 1) && (findRoundKeywords(txt).length > 1);
+  updateWarning(multi ? 'Warning: multiple round types detected in this input.' : '');
+});
+
+generateBtn.addEventListener('click', ()=> {
+  const txt = document.getElementById('inputText').value || '';
+  const totalProtects = Math.max(0, Math.min(12, parseInt(document.getElementById('protectCount').value||4,10)));
+  const totalBans = Math.max(0, Math.min(12, parseInt(document.getElementById('banCount').value||4,10)));
+  const bo = Math.max(1, parseInt(document.getElementById('boCount').value||13,10));
   const forceTB = document.getElementById('forceTB').checked;
   const autoTB = document.getElementById('autoTB').checked;
   const strictValidate = document.getElementById('strictValidate').checked;
-
   const advProtect = document.getElementById('protectSlots').value;
   const advBan = document.getElementById('banSlots').value;
-  const protectSlots = advProtect ? Math.max(0,Math.min(12,parseInt(advProtect,10))) : protectCount;
-  const banSlots = advBan ? Math.max(0,Math.min(12,parseInt(advBan,10))) : banCount;
+  const protectSlots = advProtect ? Math.max(0,Math.min(12,parseInt(advProtect,10))) : totalProtects;
+  const banSlots = advBan ? Math.max(0,Math.min(12,parseInt(advBan,10))) : totalBans;
 
-  const blocks = splitIntoBlocks(txt);
-  const foundRounds = findRoundKeywords(txt);
-  updateWarning(foundRounds.length > 1 ? 'Warning: multiple round types detected in this input — make sure you intended to parse several rounds at once.' : '');
-
+  const blocks = splitByMPID(txt);
+  const parsed = blocks.map(b => parseMatchBlock(b));
+  updateWarning((parsed.filter(p=>p!==null).length>1 && findRoundKeywords(txt).length>1) ? 'Warning: multiple round types detected in this input.' : '');
   const rows = [];
-  for(const b of blocks){
-    const parsed = parseMatchBlock(b);
-    if(!parsed) continue;
-    const row = formatRow(parsed, protectSlots, banSlots, forceTB, autoTB, bo, strictValidate);
-    rows.push(row);
+  for(const p of parsed){
+    if(!p) continue;
+    rows.push(formatRow(p, protectSlots, banSlots, forceTB, autoTB, bo, strictValidate));
   }
-  document.getElementById('output').textContent = rows.join('\n') || '(no matches parsed)';
+  outputDiv.textContent = rows.join('\n') || '(no matches parsed)';
 });
 
-/* Copy handler - ensures real tabs/newlines */
-copyBtn.addEventListener('click', async () => {
+/* copy */
+copyBtn.addEventListener('click', async ()=> {
   let out = document.getElementById('output').textContent || '';
   if(!out || out.startsWith('(no matches')) return alert('Nothing to copy');
-  // Replace any accidental literal backslash sequences with real chars
   out = out.replace(/\\t/g, '\t').replace(/\\n/g, '\n');
-  try {
-    await navigator.clipboard.writeText(out);
-    alert('Copied TSV (with real tabs) to clipboard — select a cell (not edit mode) and paste into Google Sheets.');
-  } catch(e){ alert('Copy failed: ' + e); }
-});
-
-/* Preview button */
-previewBtn.addEventListener('click', () => {
-  const txt = document.getElementById('inputText').value || '';
-  const blocks = splitIntoBlocks(txt);
-  const rows = [];
-  for(const b of blocks){
-    const parsed = parseMatchBlock(b);
-    if(!parsed) rows.push('(skipped: FF or no MP ID)'); else {
-      rows.push(`MP:${parsed.mpid}  Score:${parsed.score?parsed.score.join('-'):'?'}  Protects:${parsed.protects.join(',')||'-'}  Bans:${parsed.bans.join(',')||'-'}  Picks:${parsed.picks.join(',')||'-'}`);
-    }
-  }
-  alert(rows.join('\n\n'));
-});
-
-/* Test TSV - copies a proper TSV with real tabs so you can verify paste behavior */
-testBtn.addEventListener('click', async () => {
-  const testRow = ['118594008','NM3','NM4','HR2','NM2','DT3','HR3','DT1','HR1','HD1','NM1','HD3','HD2','NM5','FM2','FM3','NM6','TB1'];
-  const testTSV = testRow.join('\t');
   try{
-    await navigator.clipboard.writeText(testTSV);
-    alert('Test TSV copied (real tabs). Paste into Google Sheets (select a cell, do NOT double-click the cell).');
+    await navigator.clipboard.writeText(out);
+    alert('Copied TSV (real tabs). Paste into Google Sheets (single click a cell + Ctrl+V).');
   }catch(e){ alert('Copy failed: '+e); }
 });
 
-/* File upload handler */
-document.getElementById('fileInput').addEventListener('change', (ev) => {
+/* test */
+testBtn.addEventListener('click', async ()=> {
+  const row = ['118594008','','','','NM3','NM4','HR2','NM2','DT3','HR3','DT1','HR1','HD1','NM1','HD3','HD2','NM5','FM2','FM3','NM6','TB1'];
+  try{
+    await navigator.clipboard.writeText(row.join('\t'));
+    alert('Test TSV copied (real tabs).');
+  }catch(e){ alert('Copy failed: '+e); }
+});
+
+/* file load */
+document.getElementById('fileInput').addEventListener('change', (ev)=> {
   const f = ev.target.files[0];
   if(!f) return;
-  if(!f.type.includes('text') && !f.name.endsWith('.txt')) {
-    alert('Please upload a .txt file.');
-    return;
-  }
+  if(!f.type.includes('text') && !f.name.endsWith('.txt')) { alert('Please upload a .txt file.'); return; }
   const fr = new FileReader();
   fr.onload = () => { document.getElementById('inputText').value = fr.result; };
   fr.readAsText(f);
 });
 
-/* advanced toggle */
-document.getElementById('advancedToggle').addEventListener('change', (e)=>{
-  document.getElementById('advancedPanel').style.display = e.target.checked ? 'block' : 'none';
-});
+/* small util: find round keywords presence */
+function findRoundKeywords(text){
+  const kws = ['Round of','Quarterfinals','Semifinals','Finals','Grand Finals','Grandfinals','QF','SF'];
+  const found = new Set();
+  for(const k of kws) if(new RegExp('\\b' + k.replace(/\s+/g,'\\s+') + '\\b','i').test(text)) found.add(k);
+  return Array.from(found);
+}
 </script>
 </body>
 </html>
