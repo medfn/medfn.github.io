@@ -3,54 +3,88 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Match TSV Generator</title>
+<title>Match TSV Generator (BO + TB)</title>
 <style>
-  body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;margin:20px;background:#f7f8fb;color:#111}
+  :root{--bg:#f7f8fb;--pane:#fff;--muted:#666}
+  body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;margin:18px;background:var(--bg);color:#111}
+  h2{margin:0 0 6px}
   .wrap{display:flex;gap:18px;align-items:flex-start}
-  .pane{flex:1;background:#fff;border:1px solid #e2e6ef;padding:12px;border-radius:8px;min-width:260px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-  textarea{width:100%;min-height:260px;font-family:monospace;padding:8px;border-radius:6px;border:1px solid #ddd}
-  .divider{width:2px;background:linear-gradient(#e6e9f2,#e6e9f2);border-radius:2px}
-  label{display:inline-block;margin-right:10px}
-  .controls{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .pane{flex:1;background:var(--pane);border:1px solid #e7eaf3;padding:12px;border-radius:8px;min-width:260px;box-shadow:0 1px 6px rgba(10,20,40,0.04)}
+  textarea{width:100%;min-height:300px;font-family:monospace;padding:10px;border-radius:6px;border:1px solid #ddd}
+  .divider{width:2px;background:linear-gradient(#e6e9f2,#e6e9f2);border-radius:2px;align-self:stretch}
+  .controls{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  label{display:inline-flex;gap:6px;align-items:center}
+  input[type=number]{width:72px;padding:6px;border-radius:6px;border:1px solid #ccc}
+  input[type=checkbox]{transform:scale(1.05)}
   button{background:#1f6feb;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
   button:active{transform:translateY(1px)}
-  .outwrap{margin-top:12px}
-  .outbox{width:100%;min-height:140px;padding:10px;border-radius:6px;border:1px solid #ccc;background:#fcfdff;white-space:pre-wrap;font-family:monospace}
-  .small{font-size:13px;color:#555}
   .warn{background:#fff4e5;border:1px solid #ffd08a;padding:8px;border-radius:6px;color:#5a3e00;margin-top:10px}
+  .outwrap{margin-top:12px}
+  .outbox{width:100%;min-height:160px;padding:10px;border-radius:6px;border:1px solid #ccc;background:#fcfdff;white-space:pre-wrap;font-family:monospace}
   .row{display:flex;gap:8px;align-items:center}
   .copybtn{display:inline-flex;align-items:center;gap:6px}
-  .icon{font-size:16px}
+  .small{font-size:13px;color:var(--muted)}
+  .advanced{margin-top:8px;border-top:1px dashed #e6e9f2;padding-top:10px}
 </style>
 </head>
 <body>
-<h2>Match TSV Generator</h2>
-<p class="small">Paste raw match blocks into the left box or upload a .txt file on the right. Configure Protect/Ban slots then press <b>Generate</b>. FF matches are skipped.</p>
+<h2>Match TSV Generator — BO / TB aware</h2>
+<p class="small">Paste match data (left) or upload a .txt file (right). Configure Protects, Bans and BO; click <b>Generate</b>. FF matches are skipped entirely.</p>
 
 <div class="wrap">
   <div class="pane">
-    <h4>Paste match data</h4>
-    <textarea id="inputText" placeholder="Paste match text here (one or multiple matches)"></textarea>
+    <h4>Paste raw match text</h4>
+    <textarea id="inputText" placeholder="Paste match blocks here (one or many)"></textarea>
   </div>
 
-  <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
-    <div class="divider" style="height:320px"></div>
-    <div class="small">or</div>
-  </div>
+  <div class="divider"></div>
 
   <div class="pane">
-    <h4>Upload .txt file</h4>
+    <h4>Upload .txt</h4>
     <input id="fileInput" type="file" accept=".txt,text/plain" />
-    <div class="small" style="margin-top:8px">File is read as plain text client-side only. No data sent to server.</div>
-  </div>
-</div>
+    <div class="small" style="margin-top:8px">File is read as plain text client-side only. No upload to server.</div>
 
-<div style="margin-top:12px" class="controls">
-  <label>Protect slots: <input type="number" id="protectSlots" value="4" min="0" max="8" /></label>
-  <label>Ban slots: <input type="number" id="banSlots" value="4" min="0" max="8" /></label>
-  <label><input id="forceTB" type="checkbox"> Force TB1 (append)</label>
-  <label><input id="strictValidate" type="checkbox" checked> Validate pick format (AA1)</label>
-  <button id="generateBtn">Generate TSV</button>
+    <div class="controls" style="margin-top:12px;flex-direction:column;align-items:flex-start">
+      <div class="row">
+        <label>Protects:
+          <input id="protectCount" type="number" value="4" min="0" max="8" />
+        </label>
+        <label>Bans:
+          <input id="banCount" type="number" value="4" min="0" max="8" />
+        </label>
+        <label>BO:
+          <input id="boCount" type="number" value="9" min="1" max="99" />
+        </label>
+      </div>
+
+      <div class="row" style="margin-top:6px">
+        <label><input id="forceTB" type="checkbox"> Force TB1</label>
+        <label><input id="autoTB" type="checkbox" checked> Auto-detect TB from Score & BO</label>
+        <label><input id="strictValidate" type="checkbox" checked> Validate picks (AA1)</label>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button id="generateBtn">Generate TSV</button>
+        <button id="previewBtn" title="Show parsed rows in a readable table">Preview</button>
+      </div>
+
+      <div style="margin-top:10px">
+        <label><input id="advancedToggle" type="checkbox"> Advanced settings</label>
+        <div id="advancedPanel" class="advanced" style="display:none">
+          <div class="small">If you want separate 'cell slot' columns (for spreadsheet alignment) that differ from Protects/Bans counts, set them here. Usually you can leave blank to match the counts above.</div>
+          <div style="margin-top:6px">
+            <label>Protect cell slots:
+              <input id="protectSlots" type="number" value="" min="0" max="12" placeholder="default = Protects" />
+            </label>
+            <label>Ban cell slots:
+              <input id="banSlots" type="number" value="" min="0" max="12" placeholder="default = Bans" />
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <div id="warningArea"></div>
@@ -66,184 +100,211 @@
 </div>
 
 <script>
-/* === Utilities === */
-function safeText(s){ return String(s === null || s === undefined ? '' : s); }
-function uppercaseToken(tok){ return tok.trim().toUpperCase(); }
+/* ---------- Utilities ---------- */
+const keywords = ['Round of','Quarterfinals','Semifinals','Finals','Grand Finals','Grandfinals','GF','QF','SF'];
 
+function uppercaseToken(s){ return String(s||'').trim().toUpperCase(); }
 function splitTokens(s){
   if(!s) return [];
-  // common separators: | , whitespace ; ignore empty chunks
-  return s.split(/[\|\t,;]+/).map(t=>uppercaseToken(t)).filter(Boolean);
+  return s.split(/[\|\t,;]+/).map(uppercaseToken).filter(Boolean);
 }
+function safeText(s){ return String(s===null||s===undefined?'':s); }
 
-// detect FF: line "Score" followed by "FF" or standalone "FF" in block
-function isFF(block){
-  return /\bFF\b/i.test(block) && /\bScore\b/i.test(block);
-}
-
-// find MP ID numeric
+/* ---------- Extraction helpers ---------- */
 function extractMPID(block){
-  // try common patterns
-  const m1 = block.match(/MP ID\s*[\r\n\s]*([0-9]{4,})/i);
+  const m1 = block.match(/MP ID\s*[:\s]*([0-9]{4,12})/i);
   if(m1) return m1[1];
-  const m2 = block.match(/MP ID[:\s]*([0-9]{4,})/i);
-  if(m2) return m2[1];
-  const m3 = block.match(/\b([0-9]{6,12})\b/); // fallback: any long number
-  return m3 ? m3[1] : '';
+  // fallback: any 6+ digit number that looks like an ID
+  const m2 = block.match(/\b([0-9]{6,12})\b/);
+  return m2 ? m2[1] : '';
 }
 
-// extract section lines after keyword
-function extractSection(block, key){
-  const re = new RegExp(key + '\\s*([\\s\\S]*?)(?:\\n\\s*\\w+\\s|$)', 'i');
-  const m = block.match(re);
-  if(!m) return '';
-  return m[1].trim();
-}
-
-// fallback section extraction (search line starting with key)
 function extractSectionLines(block, key){
-  const pattern = new RegExp('^\\s*' + key + '\\s*\\n([\\s\\S]*?)(?=\\n\\s*\\w+:|\\n\\s*\\w+\\s|$)', 'im');
+  // match lines under a header like "Bans" until next header word or end
+  const pattern = new RegExp('^\\s*' + key + '\\s*[\\r\\n]+([\\s\\S]*?)(?=\\n\\s*\\w+\\s|\\n\\s*\\w+:|$)', 'im');
   const m = block.match(pattern);
   if(m) return m[1].trim();
-  // fallback: try single-line "Bans ...\n"
-  const ml = block.match(new RegExp(key + '\\s*([\\|\\w\\d,\\s-]*)', 'i'));
-  return ml ? ml[1].trim() : '';
+  // single-line fallback: "Bans ...\n"
+  const single = block.match(new RegExp(key + '\\s*[:\\s]*([\\|\\w\\d,\\s-]*)', 'i'));
+  return single ? single[1].trim() : '';
 }
 
-function findAllRoundKeywords(text){
-  const keywords = ['Round of','Quarterfinals','Semifinals','Finals','Grand Finals','Grandfinals','GF','QF','SF'];
+function extractScore(block){
+  // Find Score then two numbers OR "FF"
+  const scorePattern = /Score\s*[:\s]*([\d]+)\s*[\r\n]+\s*([\d]+)|Score\s*[:\s]*([0-9]+)\s*[:]\s*([0-9]+)|Score\s*[:\s]*([0-9]+)\s*-\s*([0-9]+)/i;
+  const m = block.match(scorePattern);
+  if(m){
+    // pick first two numeric groups that exist
+    const nums = m.slice(1).filter(v=>v && /^\d+$/.test(v)).slice(0,2).map(Number);
+    if(nums.length===2) return nums;
+  }
+  // fallback: find two numbers near each other on separate lines after 'Score' word
+  const idx = block.search(/Score/i);
+  if(idx>=0){
+    const tail = block.slice(idx, idx+100);
+    const numMatches = tail.match(/\d+/g);
+    if(numMatches && numMatches.length>=2) return [Number(numMatches[0]), Number(numMatches[1])];
+  }
+  return null;
+}
+
+function hasFF(block){
+  // Score contains FF (some inputs show "Score\n0\nFF")
+  return /\bFF\b/i.test(block) && /Score/i.test(block);
+}
+
+function findRoundKeywords(text){
   const found = new Set();
   for(const k of keywords){
-    if(new RegExp(k, 'i').test(text)) found.add(k.toLowerCase());
+    if(new RegExp('\\b' + k.replace(/\s+/g,'\\s+') + '\\b','i').test(text)) found.add(k);
   }
   return Array.from(found);
 }
 
-/* === Parser for a block of text representing one match === */
+/* ---------- Parse single block ---------- */
 function parseMatchBlock(block){
-  // Skip empty
   if(!block || !block.trim()) return null;
-  // If FF -> skip entirely (return null marker)
-  if(isFF(block)) return null;
+  // Skip FF entirely
+  if(hasFF(block)) return null;
   const mpid = extractMPID(block);
-  if(!mpid) {
-    // if no mpid and not FF, still skip (we assume MPID required)
-    return null;
-  }
-  // Extract protects/bans/picks (robust)
-  let protectsRaw = extractSectionLines(block, 'Protects') || extractSection(block, 'Protects') || '';
-  let bansRaw = extractSectionLines(block, 'Bans') || extractSection(block, 'Bans') || '';
-  let picksRaw = extractSectionLines(block, 'Picks') || extractSection(block, 'Picks') || '';
-
-  // If picksRaw empty, try to find lines starting with tokens (fallback)
+  if(!mpid) return null; // skip if no mpid found
+  // Extract sections
+  const protectsRaw = extractSectionLines(block,'Protects') || '';
+  const bansRaw = extractSectionLines(block,'Bans') || '';
+  let picksRaw = extractSectionLines(block,'Picks') || '';
+  // If picks empty, attempt to extract lines with '|' or tokens
   if(!picksRaw){
-    // attempt to pick up lines of tokens (lines containing |)
-    const lines = block.split('\\n').map(l=>l.trim()).filter(Boolean);
-    const candidates = [];
-    for(const l of lines){
-      if(/[A-Za-z]{2,}\d/.test(l) || l.indexOf('|')>=0) candidates.push(l);
-    }
-    if(candidates.length){
-      picksRaw = candidates.join('|');
-    }
+    const lines = block.split(/[\r\n]+/).map(l=>l.trim()).filter(Boolean);
+    const pickLines = lines.filter(l=> l.includes('|') || /[A-Za-z]{2,}\d/.test(l));
+    if(pickLines.length) picksRaw = pickLines.join('|');
   }
-
   const protects = splitTokens(protectsRaw);
   const bans = splitTokens(bansRaw);
-  // picks may be multi-line (teamA picks line then teamB picks line). split on newlines then flatten by separators
-  const picksLines = picksRaw.split(/[\r\n]+/).map(s=>s.trim()).filter(Boolean);
+  // picks may be multi-line: join lines then split
+  const picksLines = picksRaw.split(/[\r\n]+/).map(l=>l.trim()).filter(Boolean);
   let picks = [];
-  for(const pl of picksLines){
-    picks = picks.concat(splitTokens(pl));
-  }
-
-  return { mpid, protects, bans, picks, raw:block };
+  for(const pl of picksLines) picks = picks.concat(splitTokens(pl));
+  // extract score (for TB auto-detection)
+  const score = extractScore(block); // returns [a,b] or null
+  return { mpid, protects, bans, picks, score, raw:block };
 }
 
-/* === Format a single match row (TSV string) === */
-function formatRow(match, protectSlots, banSlots, forceTB, strictValidate){
-  // Fill protects to protectSlots
+/* ---------- Row formatting ---------- */
+function formatRow(match, protectSlots, banSlots, forceTB, autoTB, bo, strictValidate){
   const out = [match.mpid];
+  // write protect slots
   for(let i=0;i<protectSlots;i++) out.push(match.protects[i] || '');
-
+  // bans
   for(let i=0;i<banSlots;i++) out.push(match.bans[i] || '');
 
-  // normalize picks
-  let picks = match.picks.map(p => uppercaseToken(p));
-  // append TB1 if forced and not present
+  // picks normalize & optionally validate
+  let picks = match.picks.map(uppercaseToken);
+  // auto TB detection from score + BO
+  if(autoTB && match.score && bo && bo>0){
+    const a = match.score[0], b = match.score[1];
+    const mx = Math.max(a,b), mn = Math.min(a,b);
+    const winThreshold = Math.ceil(bo/2);
+    // user rule: TB if max == winThreshold && min == winThreshold-1  OR max > winThreshold
+    if((mx === winThreshold && mn === winThreshold - 1) || mx > winThreshold){
+      if(!picks.some(p => /^TB\d+/i.test(p))) picks.push('TB1');
+    }
+  }
+  // force TB
   if(forceTB && !picks.some(p => /^TB\d+/i.test(p))) picks.push('TB1');
 
-  // validate picks tokens if requested
+  // strict validation (AA1)
   if(strictValidate){
     picks = picks.map(tok=>{
-      const t = tok.trim().toUpperCase();
+      const t = uppercaseToken(tok);
       if(!t) return '';
       if(/^TB\d+$/i.test(t)) return t;
-      // allow 2+ letters + 1-2 digits
+      // allow 2+ letters followed by 1-2 digits (rare 2-digit)
       if(/^[A-Z]{2,}\d{1,2}$/.test(t)) return t;
-      // fallback: sanitize (remove bad chars)
+      // sanitize fallback
       const filtered = t.replace(/[^A-Z0-9]/g,'');
       return filtered;
     }).filter(Boolean);
   }
-
-  // append picks
   out.push(...picks);
-  return out.join('\\t');
+  return out.join('\t');
 }
 
-/* === Top-level generate function === */
-document.getElementById('generateBtn').addEventListener('click', () => {
+/* ---------- Main UI logic ---------- */
+
+const generateBtn = document.getElementById('generateBtn');
+const copyBtn = document.getElementById('copyBtn');
+const previewBtn = document.getElementById('previewBtn');
+const warningArea = document.getElementById('warningArea');
+
+function updateWarning(text){ warningArea.innerHTML = text ? '<div class="warn">'+text+'</div>' : ''; }
+
+function splitIntoBlocks(txt){
+  // try to split by round headers first (keeps header lines)
+  const re = /(?=(?:\bRound of\b|\bQuarterfinals\b|\bSemifinals\b|\bFinals\b|\bGrand Finals\b|\bGrandfinals\b|\bQF\b|\bSF\b))/ig;
+  const parts = txt.split(re).map(s=>s.trim()).filter(Boolean);
+  // if this produced 1 and the text seems long, fallback to double-newline split
+  if(parts.length === 1){
+    const alt = txt.split(/[\r\n]{2,}/).map(s=>s.trim()).filter(Boolean);
+    return alt.length ? alt : parts;
+  }
+  return parts;
+}
+
+generateBtn.addEventListener('click', () => {
   const txt = document.getElementById('inputText').value || '';
-  const protectSlots = Math.max(0, Math.min(8, parseInt(document.getElementById('protectSlots').value||4,10)));
-  const banSlots = Math.max(0, Math.min(8, parseInt(document.getElementById('banSlots').value||4,10)));
+  const protectCount = Math.max(0, Math.min(12, parseInt(document.getElementById('protectCount').value||4,10)));
+  const banCount = Math.max(0, Math.min(12, parseInt(document.getElementById('banCount').value||4,10)));
+  const bo = Math.max(1, parseInt(document.getElementById('boCount').value||9,10));
   const forceTB = document.getElementById('forceTB').checked;
+  const autoTB = document.getElementById('autoTB').checked;
   const strictValidate = document.getElementById('strictValidate').checked;
 
-  // split input into blocks: use headers (Round, Quarterfinals, Semifinals, Finals, Grand Finals) or double newlines
-  let blocks = txt.split(/(?=\\b(Round of|Quarterfinals|Semifinals|Finals|Grand Finals|Grandfinals)\\b)/i).filter(Boolean);
-  // fallback: split by two or more newlines
-  if(blocks.length === 0) blocks = txt.split(/\\n{2,}/).map(s=>s.trim()).filter(Boolean);
-  if(blocks.length === 0){
-    document.getElementById('output').textContent = '';
-    return;
-  }
+  // advanced slots override if present
+  const advProtect = document.getElementById('protectSlots').value;
+  const advBan = document.getElementById('banSlots').value;
+  const protectSlots = advProtect ? Math.max(0,Math.min(12,parseInt(advProtect,10))) : protectCount;
+  const banSlots = advBan ? Math.max(0,Math.min(12,parseInt(advBan,10))) : banCount;
 
-  // detect multiple different round keywords
-  const roundsFound = findAllRoundKeywords(txt);
-  const warningArea = document.getElementById('warningArea');
-  warningArea.innerHTML = '';
-  if(roundsFound.length > 1){
-    const w = document.createElement('div'); w.className='warn';
-    w.textContent = 'Warning: multiple round types detected in this input — make sure you intended to parse several rounds at once.';
-    warningArea.appendChild(w);
-  }
+  // split into blocks
+  const blocks = splitIntoBlocks(txt);
+  // detect distinct round types in the whole text
+  const foundRounds = findRoundKeywords(txt);
+  updateWarning(foundRounds.length > 1 ? 'Warning: multiple round types detected in this input — make sure you intended to parse several rounds at once.' : '');
 
   const rows = [];
   for(const b of blocks){
     const parsed = parseMatchBlock(b);
-    if(!parsed) continue; // skip FF or unmatched blocks
-    const row = formatRow(parsed, protectSlots, banSlots, forceTB, strictValidate);
+    if(!parsed) continue; // skip FF or unmatched
+    const row = formatRow(parsed, protectSlots, banSlots, forceTB, autoTB, bo, strictValidate);
     rows.push(row);
   }
-
-  const outputStr = rows.join('\\n');
-  document.getElementById('output').textContent = outputStr || '(no matches parsed)';
+  document.getElementById('output').textContent = rows.join('\n') || '(no matches parsed)';
 });
 
-/* === Copy button === */
-document.getElementById('copyBtn').addEventListener('click', async () => {
+copyBtn.addEventListener('click', async () => {
   const out = document.getElementById('output').textContent;
   if(!out || out.startsWith('(no matches')) return alert('Nothing to copy');
-  try{
+  try {
     await navigator.clipboard.writeText(out);
     alert('Copied TSV to clipboard — paste into Google Sheets (first cell).');
-  }catch(e){
-    alert('Copy failed: ' + e);
-  }
+  } catch(e){ alert('Copy failed: ' + e); }
 });
 
-/* === File upload handler (client-side only) === */
+/* preview: show parsed rows in readable format (small) */
+previewBtn.addEventListener('click', () => {
+  const txt = document.getElementById('inputText').value || '';
+  const blocks = splitIntoBlocks(txt);
+  const rows = [];
+  for(const b of blocks){
+    const parsed = parseMatchBlock(b);
+    if(!parsed) rows.push('(skipped: FF or no MP ID)'); else {
+      rows.push(`MP:${parsed.mpid}  Score:${parsed.score?parsed.score.join('-'):'?'}  Protects:${parsed.protects.join(',')||'-'}  Bans:${parsed.bans.join(',')||'-'}  Picks:${parsed.picks.join(',')||'-'}`);
+    }
+  }
+  alert(rows.join('\\n\\n'));
+});
+
+/* file upload handler (client only) */
 document.getElementById('fileInput').addEventListener('change', (ev) => {
   const f = ev.target.files[0];
   if(!f) return;
@@ -252,11 +313,13 @@ document.getElementById('fileInput').addEventListener('change', (ev) => {
     return;
   }
   const fr = new FileReader();
-  fr.onload = () => {
-    // write safely into textarea (text only)
-    document.getElementById('inputText').value = fr.result;
-  };
+  fr.onload = () => { document.getElementById('inputText').value = fr.result; };
   fr.readAsText(f);
+});
+
+/* advanced toggle */
+document.getElementById('advancedToggle').addEventListener('change', (e)=>{
+  document.getElementById('advancedPanel').style.display = e.target.checked ? 'block' : 'none';
 });
 </script>
 </body>
