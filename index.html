@@ -7,7 +7,24 @@
     <title>med74 | Home</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/x-icon" href="./content/icon.ico">
-    <script src="main.js"></script>
+    <script>
+        // function for news/announcement/notification
+        function showNews(message) {
+            let newsFeed = document.getElementById('news-feed');
+            newsFeed.textContent = message;
+            newsFeed.classList.add('show');
+            setTimeout(() => {newsFeed.classList.remove('show');}, 2000); // Show for 2 seconds, then fade out
+            }
+        // function to spin the image on hover
+        function Spin() {
+            const img = document.querySelector('.patata img');
+            img.style.animation = 'spin 2s linear infinite';
+        }
+        function stopSpin() {
+            const img = document.querySelector('.patata img');
+            img.style.animation = 'none';
+        }
+    </script>
 </head>
 
 <body>
@@ -28,7 +45,7 @@
         <p>i do stuff.</p>
         <p>this is literally me lol</p>
         <div class="patata">
-            <img src="./content/patata.jpg" alt="med74">
+            <img src="./content/patata.jpg" alt="med74" onmouseover="Spin();" onmouseout="stopSpin();">
         </div>
     </div>
 
@@ -58,15 +75,6 @@
                         }).catch(err => {
                             console.error('Failed to copy: ', err);
                         });
-                    }
-                    // function for news/announcement/notification
-                    function showNews(message) {
-                        let newsFeed = document.getElementById('news-feed');
-                        newsFeed.textContent = message;
-                        newsFeed.classList.add('show');
-                        setTimeout(() => {
-                            newsFeed.classList.remove('show');
-                        }, 2000); // Show for 2 seconds, then fade out
                     }
                 </script>
                 <a class="link" target="_blank" href="https://github.com/medfn">
