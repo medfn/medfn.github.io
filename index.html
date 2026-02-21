@@ -7,24 +7,7 @@
     <title>med74 | Home</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/x-icon" href="./content/icon.ico">
-    <script>
-        // function for news/announcement/notification
-        function showNews(message) {
-            let newsFeed = document.getElementById('news-feed');
-            newsFeed.textContent = message;
-            newsFeed.classList.add('show');
-            setTimeout(() => {newsFeed.classList.remove('show');}, 2000); // Show for 2 seconds, then fade out
-            }
-        // function to spin the image on hover
-        function Spin() {
-            const img = document.querySelector('.patata img');
-            img.style.animation = 'spin 2s linear infinite';
-        }
-        function stopSpin() {
-            const img = document.querySelector('.patata img');
-            img.style.animation = 'none';
-        }
-    </script>
+    <script src="main.js"></script>
 </head>
 
 <body>
@@ -45,7 +28,9 @@
         <p>i do stuff.</p>
         <p>this is literally me lol</p>
         <div class="patata">
-            <img src="./content/patata.jpg" alt="med74" onmouseover="Spin();" onmouseout="stopSpin();">
+            <div class="rotator">
+                <img src="./content/patata.jpg" alt="med74 image">
+            </div>
         </div>
     </div>
 
@@ -67,47 +52,45 @@
         </div>
         <div class="box-grey">
             <div id="links">
-                <script>
-                    function copyDiscord() {
-                        const discordUsername = "medfouna";
-                        navigator.clipboard.writeText(discordUsername).then(() => {
-                            showNews("Discord username copied to clipboard!");
-                        }).catch(err => {
-                            console.error('Failed to copy: ', err);
-                        });
-                    }
-                </script>
                 <a class="link" target="_blank" href="https://github.com/medfn">
                     <img class="icon" src="./content/icons/github.png" alt="GitHub Icon">
+                    <span class="link-label">GitHub</span>
                     <!-- <p>Projects</p> -->
                 </a>
                 <a class="link" target="_blank" href="https://www.youtube.com/@MedFN">
                     <img class="icon" src="./content/icons/youtube.png" alt="YouTube Icon">
+                    <span class="link-label">YouTube</span>
                     <!-- <p>Videos</p> -->
                 </a>
                 <a class="link" target="_blank" href="https://www.twitch.tv/medfn7">
                     <img class="icon" src="./content/icons/twitch.png" alt="Twitch Icon">
+                    <span class="link-label">Twitch</span>
                     <!-- <p>Live</p> -->
                 </a>
                 <a class="link" onclick="copyDiscord(); return false;">
                     <img class="icon" src="./content/icons/discord.png" alt="Click to Copy Discord Username" title="Click to Copy Discord Username">
+                    <span class="link-label">Discord</span>
                     <!-- <p>Contact</p> -->
                 </a>
                 <a class="link" target="_blank" onclick="showNews('not quiet there yet :)'); return false;">
                     <img class="icon" src="./content/icons/linkedin.png" alt="still WIP" title="still WIP">
+                    <span class="link-label">LinkedIn</span>
                     <!-- <p>LinkedIn</p> -->
                 </a>
                 <a class="link" target="_blank" href="https://ko-fi.com/medfouna">
                     <img class="icon" src="./content/icons/kofi.png" alt="Ko-fi Icon">
+                    <span class="link-label">Ko‑fi</span>
                     <!-- <p>Support</p> -->
                 </a>
                 <a class="link" target="_blank" href="https://osu.ppy.sh/users/29161604">
                     <img class="icon" src="./content/icons/osu.png" alt="osu Icon">
+                    <span class="link-label">osu!</span>
                     <!-- <p>osu!</p> -->
                 </a>
             </div>
         </div>
     </div>
+
     <hr class="hr">
     </hr>
     <div id="footer">
