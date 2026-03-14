@@ -375,14 +375,10 @@
                 <a href="/osu/match-data-converter.html" class="card-link-btn"><span>Go to Match Data Converter</span></a>
             </div>
             <!-- Example extra cards -->
-            <div class="card">1</div>
+            <!-- <div class="card">1</div>
             <div class="card">2</div>
             <div class="card">3</div>
-            <div class="card">4</div>
-            <div class="card">5</div>
-            <div class="card">6</div>
-            <div class="card">7</div>
-            <div class="card">end</div>
+            <div class="card">end</div> -->
             <div class="carousel-spacer"></div>
         </div>
         <div class="carousel-fade right"></div>
@@ -398,53 +394,53 @@
         </p>
     </div>
     <script>
-const carousel = document.getElementById('tools-carousel');
-const leftBtn = document.querySelector('.carousel-arrow.left');
-const rightBtn = document.querySelector('.carousel-arrow.right');
+        const leftBtn = document.querySelector('.carousel-arrow.left');
+        const carousel = document.getElementById('tools-carousel');
+        const rightBtn = document.querySelector('.carousel-arrow.right');
 
-function getCardWidth() {
-    // Find the first card that is not a spacer
-    const realCard = carousel.querySelector('.card');
-    return realCard ? realCard.offsetWidth + 36 : 600 + 36; // card width + gap
-}
+        function getCardWidth() {
+            // Find the first card that is not a spacer
+            const realCard = carousel.querySelector('.card');
+            return realCard ? realCard.offsetWidth + 36 : 600 + 36; // card width + gap
+        }
 
-function updateFadeAndButtons() {
-    const leftFade = document.querySelector('.carousel-fade.left');
-    const rightFade = document.querySelector('.carousel-fade.right');
-    if (carousel.scrollLeft <= 0) {
-        leftFade.style.opacity = "0";
-        leftBtn.disabled = true;
-    } else {
-        leftFade.style.opacity = "1";
-        leftBtn.disabled = false;
-    }
-    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-    if (Math.abs(carousel.scrollLeft - maxScroll) < 2) {
-        rightFade.style.opacity = "0";
-        rightBtn.disabled = true;
-    } else {
-        rightFade.style.opacity = "1";
-        rightBtn.disabled = false;
-    }
-}
-
-function scrollToCard(direction, e) {
-    if (e) e.preventDefault();
-    const cardWidth = getCardWidth();
-    let scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
-    let target = carousel.scrollLeft + scrollAmount;
-    // Clamp to [0, maxScroll]
-    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-    if (target < 0) target = 0;
-    if (target > maxScroll) target = maxScroll;
-    carousel.scrollLeft = target;
-}
-
-leftBtn.onclick = (e) => scrollToCard('left', e);
-rightBtn.onclick = (e) => scrollToCard('right', e);
-
-carousel.addEventListener('scroll', updateFadeAndButtons);
-updateFadeAndButtons();
+        function updateFadeAndButtons() {
+            const leftFade = document.querySelector('.carousel-fade.left');
+            const rightFade = document.querySelector('.carousel-fade.right');
+            if (carousel.scrollLeft <= 0) {
+                leftFade.style.opacity = "0";
+                leftBtn.disabled = true;
+            } else {
+                leftFade.style.opacity = "1";
+                leftBtn.disabled = false;
+            }
+            const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+            if (Math.abs(carousel.scrollLeft - maxScroll) < 2) {
+                rightFade.style.opacity = "0";
+                rightBtn.disabled = true;
+            } else {
+                rightFade.style.opacity = "1";
+                rightBtn.disabled = false;
+            }
+        }
+        
+        function scrollToCard(direction, e) {
+            if (e) e.preventDefault();
+            const cardWidth = getCardWidth();
+            let scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
+            let target = carousel.scrollLeft + scrollAmount;
+            // Clamp to [0, maxScroll]
+            const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+            if (target < 0) target = 0;
+            if (target > maxScroll) target = maxScroll;
+            carousel.scrollLeft = target;
+        }
+        
+        leftBtn.onclick = (e) => scrollToCard('left', e);
+        rightBtn.onclick = (e) => scrollToCard('right', e);
+        
+        carousel.addEventListener('scroll', updateFadeAndButtons);
+        updateFadeAndButtons();
     </script>
 </body>
 </html>

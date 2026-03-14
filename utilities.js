@@ -3,10 +3,9 @@ function showNews(message) {
     let newsFeed = document.getElementById("news-feed");
     newsFeed.textContent = message;
     newsFeed.classList.add("show");
-    setTimeout(() => {
-        newsFeed.classList.remove("show");
-    }, 2000); // Show for 2 seconds, then fade out
+    setTimeout(() => {newsFeed.classList.remove("show");}, 2000); // Show for 2 seconds, then fade out
 }
+
 function copyDiscord() {
     const discordUsername = "medfouna";
     if (navigator.clipboard && window.isSecureContext) {
