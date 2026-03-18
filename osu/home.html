@@ -1,446 +1,501 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>osu! med74 | Home</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #181c24;
-            color: #e9e9f4;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-        }
-        hr {
-            border: none;
-            border-top: 1px solid #d4d4d4;
-            margin: 36px auto;
-            width: 96%;
-            max-width: 950px;
-        }
-        h1 {
-            color: #ff66b2;
-            font-size: 2.7em;
-            margin-top: 36px;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-            text-align: center;
-        }
-        .section-title {
-            color: #fff;
-            background: linear-gradient(90deg, #ff66b2 60%, #6ec6ff 100%);
-            padding: 20px 0 18px 0;
-            font-size: 2.3em;
-            border-radius: 14px;
-            margin: 48px auto 32px auto;
-            width: 96%;
-            max-width: 950px;
-            box-shadow: 0 2px 16px rgba(0,0,0,0.13);
-            letter-spacing: 2px;
-            font-weight: bold;
-            text-align: center;
-        }
-        .section-title.tournaments {
-            background: linear-gradient(90deg, #6ec6ff 60%, #ff66b2 100%);
-            color: #fff;
-        }
-        /* Tournament section text styling */
-        .tournaments-section {
-            margin: 48px auto 0 auto;
-            text-align: center;
-        }
-        .tournaments-section h2 {
-            color: #6ec6ff;
-            font-size: 2.3em;
-            font-weight: bold;
-            margin-bottom: 12px;
-            margin-top: 0;
-            letter-spacing: 1.5px;
-        }
-        .tournaments-section p {
-            color: #e9e9f4;
-            font-size: 1.25em;
-            margin: 0 auto 24px auto;
-        }
-        .tournaments-section a {
-            color: #ff66b2;
-            font-weight: bold;
-            text-decoration: underline;
-            transition: color 0.18s;
-        }
-        .tournaments-section a:hover,
-        .tournaments-section a:focus {
-            color: #6ec6ff;
-        }
-        /* Carousel styles */
-        .tools-carousel-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 1100px;
-            margin: 0 auto 48px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .tools-carousel {
-            display: flex;
-            overflow-x: auto;
-            scroll-behavior: auto;
-            gap: 36px;
-            padding: 10px 0;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            scroll-snap-type: x mandatory;
-            box-sizing: border-box;
-        }
-        .tools-carousel > .card {
-            scroll-snap-align: start;
-        }
-        .carousel-spacer {
-            flex: 0 0 90px;
-            width: 90px;
-            height: 1px;
-            pointer-events: none;
-        }
-        .tools-carousel::-webkit-scrollbar {
-            display: none;
-        }
-        .carousel-arrow {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            z-index: 3;
-            background: transparent;
-            border: none;
-            border-radius: 16px;
-            width: 70px;
-            height: 290px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #2196f3;
-            font-size: 2em;
-            cursor: pointer;
-            box-shadow: none;
-            backdrop-filter: blur(0);
-            transition: background 0.18s, color 0.18s, opacity 0.18s;
-            opacity: 0.85;
-            outline: none;
-            user-select: none;
-            pointer-events: auto;
-        }
-        .carousel-arrow.left { left: 0; }
-        .carousel-arrow.right { right: 0; }
-        .carousel-arrow:hover:not(:disabled),
-        .carousel-arrow:focus-visible:not(:disabled) {
-            background: #2196f3;
-            color: #fff;
-            opacity: 1;
-        }
-        .carousel-arrow:active:not(:disabled) {
-            background: #1565c0;
-            color: #fff;
-            opacity: 1;
-        }
-        .carousel-arrow:disabled {
-            background: transparent;
-            color: #aaa;
-            cursor: not-allowed;
-            opacity: 0.3;
-            pointer-events: none;
-        }
-        .carousel-fade {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 90px;
-            pointer-events: none;
-            z-index: 2;
-            transition: opacity 0.2s;
-        }
-        .carousel-fade.left {
-            left: 0;
-            background: linear-gradient(90deg, #181c24 80%, transparent);
-        }
-        .carousel-fade.right {
-            right: 0;
-            background: linear-gradient(270deg, #181c24 80%, transparent);
-        }
-        .card {
-            background: #23283a;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.18);
-            width: 600px;
-            min-width: 600px;
-            max-width: 600px;
-            height: 290px;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            overflow: hidden;
-            transition: box-shadow 0.18s;
-        }
-        .card-title {
-            background: #ff66b2; /* Solid pink */
-            color: #fff;
-            padding: 0;
-            font-size: 1.7em;
-            font-weight: bold;
-            text-align: center;
-            letter-spacing: 1.5px;
-            border-bottom: 2px solid #ffb6e6;
-            box-shadow: 0 2px 8px rgba(255,102,178,0.08);
-            height: 65px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-shadow: 0 2px 8px rgba(110,198,255,0.12), 0 1px 1px #181c24;
-        }
-        .card-content-row {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 0 18px 0 0;
-            gap: 18px;
-            flex: 1;
-            height: 200px;
-        }
-        .card-image {
-            flex: 0 0 350px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            height: 200px;
-            margin-left: 0;
-        }
-        .card-image img {
-            width: 350px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 0;
-            background: #222;
-            border-left: 4px solid #ff66b2;
-            border-right: 4px solid #6ec6ff;
-            border-top: none;
-            border-bottom: none;
-            display: block;
-            margin-left: 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-        }
-        .card-text {
-            flex: 1;
-            min-width: 200px;
-            max-width: 220px;
-            text-align: left;
-            color: #c7c7e6;
-            font-size: 1.13em;
-            padding-left: 0;
-            padding-right: 0;
-            word-break: break-word;
-            overflow-wrap: break-word;
-            hyphens: auto;
-            display: flex;
-            align-items: center;
-            height: 100%;
-        }
-        .card-link-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            background: #2196f3; /* Solid blue */
-            color: #fff;
-            border: none;
-            border-radius: 0 0 16px 16px;
-            padding: 0;
-            height: 55px;
-            font-size: 1.18em;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            letter-spacing: 1.5px;
-            transition: background 0.2s, color 0.2s, font-size 0.2s, box-shadow 0.2s, filter 0.2s;
-            box-shadow: 0 2px 8px rgba(110,198,255,0.08);
-            margin-top: auto;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .card-link-btn:hover, .card-link-btn:focus {
-            background: linear-gradient(90deg, #6ec6ff 0%, #ff66b2 100%);
-            color: #fff;
-            box-shadow: 0 4px 16px #ff66b244;
-            filter: brightness(1.07);
-        }
-        .card-link-btn span {
-            width: 100%;
-            text-align: center;
-            display: block;
-            transition: transform 0.18s, font-size 0.2s, filter 0.2s;
-            position: relative;
-            z-index: 1;
-            filter: drop-shadow(0 2px 8px #6ec6ff33);
-        }
-        .card-link-btn:hover span,
-        .card-link-btn:focus span {
-            transform: scale(1.125);
-        }
-        @media (max-width: 900px) {
-            .cards-container {
-                flex-direction: column;
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>osu! med74 | Home</title>
+        <style>
+            html {
+                scroll-behavior: smooth;
+            }
+            body {
+                font-family: "Segoe UI", Arial, sans-serif;
+                background: #181c24;
+                color: #e9e9f4;
+                margin: 0;
+                padding: 0;
+                min-height: 100vh;
+            }
+            hr {
+                border: none;
+                border-top: 1px solid #d4d4d4;
+                margin: 36px auto;
+                width: 96%;
+                max-width: 950px;
+            }
+            h1 {
+                color: #ff66b2;
+                font-size: 2.7em;
+                margin-top: 36px;
+                margin-bottom: 10px;
+                letter-spacing: 2px;
+                text-align: center;
+            }
+            .section-title {
+                color: #fff;
+                background: linear-gradient(90deg, #ff66b2 60%, #6ec6ff 100%);
+                padding: 20px 0 18px 0;
+                font-size: 2.3em;
+                border-radius: 14px;
+                margin: 48px auto 32px auto;
+                width: 96%;
+                max-width: 950px;
+                box-shadow: 0 2px 16px rgba(0, 0, 0, 0.13);
+                letter-spacing: 2px;
+                font-weight: bold;
+                text-align: center;
+            }
+        </style>
+
+        <style>
+            /* Carousel styles (CSS-only scroll buttons) */
+            .carousel {
+                margin: 5rem auto 48px;
+                padding: 1rem;
+                width: min(900px, 100%);
+                max-width: 900px;
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.04);
+                position: relative;
+                display: grid;
+                gap: 3rem;
+                grid-auto-flow: column;
+                grid-auto-columns: 600px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                scroll-snap-type: x mandatory;
+                scroll-behavior: smooth;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+
+                /* Anchor this container so we can position scroll buttons exactly next to it */
+                anchor-name: --carousel;
+            }
+            .carousel::-webkit-scrollbar {
+                display: none;
+            }
+            .carousel > .card {
+                scroll-snap-align: center;
+                scroll-snap-stop: always;
+            }
+
+            /* Scroll buttons via CSS (modern browser support) */
+            .carousel::scroll-button(*) {
+                position: absolute;
+                height: 14rem;
+                width: 5rem;
+                padding: 1rem;
+                background-color: rgba(255, 255, 255, 0.9);
+                cursor: pointer;
+                font-size: large;
+                /* display: flex;
                 align-items: center;
+                justify-content: center; */
+                transition: all 0.3s ease-in-out;
+                border-radius: 16px;
+                box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+                color: #181c24;
+                top: calc(
+                    anchor(--carousel top) +
+                        (anchor(--carousel bottom) - anchor(--carousel top)) /
+                        2 - 7rem
+                );
+            }
+            .carousel::scroll-button(right) {
+                content: "→";
+                /* right: 0; Fallback for browsers without anchor() */
+                left: calc(anchor(--carousel right) + 1rem);
+            }
+            .carousel::scroll-button(left) {
+                content: "←";
+                /* left: 0; Fallback for browsers without anchor() */
+                right: calc(anchor(--carousel left) + 1rem);
+            }
+            .carousel::scroll-button(right):hover,
+            .carousel::scroll-button(left):hover {
+                background-color: rgba(13, 144, 204, 0.8);
+                color: #fff;
+            }
+            .carousel::scroll-button(right):disabled,
+            .carousel::scroll-button(left):disabled {
+                background-color: rgba(13, 144, 204, 0.3);
+                cursor: not-allowed;
             }
             .card {
-                width: 98vw;
-                min-width: 0;
-                max-width: 100vw;
+                background: #23283a;
+                border-radius: 16px;
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+                width: 600px;
+                min-width: 600px;
+                max-width: 600px;
+                min-height: 290px;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                overflow: hidden;
+                position: relative;
+                transition: box-shadow 0.18s;
             }
-            .card-image img {
-                width: 60vw;
-                max-width: 350px;
-                height: 120px;
+            /* Divider between image and text */
+            .card-divider {
+                position: absolute;
+                top: 65px; /* start below the title */
+                bottom: 0;
+                left: 350px;
+                width: 4px;
+                background: #6ec6ff;
+            }
+
+            .card-title {
+                background: #ff66b2;
+                color: #fff;
+                padding: 0;
+                font-size: 1.7em;
+                font-weight: bold;
+                text-align: center;
+                letter-spacing: 1.5px;
+                border-bottom: 2px solid #ffb6e6;
+                box-shadow: 0 2px 8px rgba(255, 102, 178, 0.08);
+                height: 65px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-shadow:
+                    0 2px 8px rgba(110, 198, 255, 0.12),
+                    0 1px 1px #181c24;
             }
             .card-content-row {
-                flex-direction: column;
-                height: auto;
-                gap: 8px;
-                padding: 0 8px 0 0;
+                display: flex;
+                flex-direction: row;
+                align-items: stretch;
+                justify-content: flex-start;
+                padding: 0;
+                gap: 16px;
+                flex: 1;
+                height: 180px;
+            }
+            .card-image {
+                flex: 0 0 350px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                height: 180px;
+                margin-left: 0;
+            }
+            .card-image img {
+                width: 350px;
+                height: 180px;
+                object-fit: cover;
+                border-radius: 0;
+                background: #222;
+                border-left: 4px solid #ff66b2;
+                border-top: none;
+                border-bottom: none;
+                display: block;
+                margin-left: 0;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             }
             .card-text {
-                max-width: 100vw;
+                flex: 1 1 0;
                 min-width: 0;
-                text-align: center;
-                padding: 0 8px;
+                min-height: 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+                gap: 0.4rem;
+                text-align: left;
+                color: #c7c7e6;
+                font-size: 1.05em;
+                line-height: 1.35;
+                padding: 10px 14px;
+                word-break: break-word;
+                overflow-wrap: break-word;
+                hyphens: auto;
+                height: 100%;
             }
-            .card-title {
-                font-size: 1.3em;
-                height: 48px;
+            .card-status {
+                display: inline-block;
+                padding: 0.25rem 0.75rem;
+                border-radius: 999px;
+                font-weight: bold;
+                font-size: 0.9em;
+                margin-bottom: 0;
+                align-self: flex-start;
             }
+            .card-status--wip {
+                background: rgba(255, 50, 50, 0.85);
+                color: #fff;
+            }
+            .card-status--completed {
+                background: rgba(56, 203, 112, 0.85);
+                color: #dfdfdf;
+            }
+            .card-status--graveyard {
+                background: rgba(75, 75, 75, 0.85);
+                color: #b1b1b1;
+            }
+
+            /* Status text via CSS so HTML stays clean */
+            .card-status--wip::before {
+                content: "Work in progress";
+            }
+            .card-status--completed::before {
+                content: "Completed";
+            }
+            .card-status--graveyard::before {
+                content: "Graveyard";
+            }
+
+            .card-platform {
+                font-size: 0.95em;
+                color: #c7c7e6;
+            }
+            .card-platform strong {
+                color: #fff;
+            }
+
+            .card-desc {
+                flex: 1 1 auto;
+                overflow-wrap: break-word;
+                word-break: break-word;
+                white-space: normal;
+                font-size: 0.95em;
+                line-height: 1.35;
+                overflow-y: auto;
+                padding-right: 4px;
+            }
+
             .card-link-btn {
-                height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 350px;
+                background: #2196f3;
+                color: #fff;
+                border: none;
+                border-radius: 0 0 0 16px;
+                padding: 0;
+                height: 45px;
+                font-size: 1.1em;
+                font-weight: bold;
+                cursor: pointer;
+                text-decoration: none;
+                letter-spacing: 1.5px;
+                transition:
+                    background 0.2s,
+                    color 0.2s,
+                    font-size 0.2s,
+                    box-shadow 0.2s,
+                    filter 0.2s;
+                box-shadow: 0 2px 8px rgba(110, 198, 255, 0.08);
+                margin: 0;
+                align-self: flex-start;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
             }
-        }
-    </style>
-</head>
-<body>
-    <h1>Welcome to osu! med74</h1>
-    <p style="color:#c7c7e6;font-size:1.18em;margin-bottom:36px;text-align:center;">
-        This is the home page for the osu! section of med74's website.<br>
-        You can find tools, info, and other stuff related to osu! here.
-    </p>
-    <hr>
-    <div class="section-title">My Tools</div>
-    <div class="tools-carousel-wrapper">
-        <button class="carousel-arrow left" aria-label="Scroll left">&#8592;</button>
-        <div class="carousel-fade left"></div>
-        <div class="tools-carousel" id="tools-carousel">
-            <div class="carousel-spacer"></div>
-            <div class="card">
-                <div class="card-title">osu! Beatmap Downloader</div>
-                <div class="card-content-row">
-                    <div class="card-image">
-                        <img src="/content/cards/obd.png" alt="osu! Beatmap Downloader">
-                    </div>
-                    <div class="card-text">
-                        Download multiple osu! beatmaps at once and pack them up into mappacks easily.
-                    </div>
-                </div>
-                <a href="/osu/obd-github.html" class="card-link-btn"><span>Go to Beatmap Downloader</span></a>
-            </div>
-            <div class="card">
-                <div class="card-title">Default Match Time Scheduler</div>
-                <div class="card-content-row">
-                    <div class="card-image">
-                        <img src="/content/cards/osu default scheduler.png" alt="osu! Default Scheduler">
-                    </div>
-                    <div class="card-text">
-                        A tool that will suggest the best possible default match time for two different teams on different timezones.
-                    </div>
-                </div>
-                <a href="/osu/scheduler.html" class="card-link-btn"><span>Go to Default Scheduler</span></a>
-            </div>
-            <div class="card">
-                <div class="card-title">Match Data Converter</div>
-                <div class="card-content-row">
-                    <div class="card-image">
-                        <img src="/content/cards/match-data-converter.png" alt="Match Data Converter">
-                    </div>
-                    <div class="card-text">
-                        Convert and analyze osu! match data easily for tournaments and results tracking.
-                    </div>
-                </div>
-                <a href="/osu/match-data-converter.html" class="card-link-btn"><span>Go to Match Data Converter</span></a>
-            </div>
-            <!-- Example extra cards -->
-            <!-- <div class="card">1</div>
-            <div class="card">2</div>
-            <div class="card">3</div>
-            <div class="card">end</div> -->
-            <div class="carousel-spacer"></div>
-        </div>
-        <div class="carousel-fade right"></div>
-        <button class="carousel-arrow right" aria-label="Scroll right">&#8594;</button>
-    </div>
-    <hr>
-    <div class="section-title tournaments">My Tournaments</div>
-    <div class="tournaments-section">
-        <h2>Tournaments I've Hosted</h2>
-        <p>
-            Check out the tournaments I've hosted on my
-            <a href="https://med74.rf.gd/tournaments.html">tournaments page</a>.
+            .card-link-btn:hover,
+            .card-link-btn:focus {
+                background: linear-gradient(90deg, #6ec6ff 0%, #ff66b2 100%);
+                color: #fff;
+                box-shadow: 0 4px 16px #ff66b244;
+                filter: brightness(1.07);
+            }
+            .card-link-btn span {
+                width: 100%;
+                text-align: center;
+                display: block;
+                transition:
+                    transform 0.18s,
+                    font-size 0.2s,
+                    filter 0.2s;
+                position: relative;
+                z-index: 1;
+                filter: drop-shadow(0 2px 8px #6ec6ff33);
+            }
+            .card-link-btn:hover span,
+            .card-link-btn:focus span {
+                transform: scale(1.125);
+            }
+            /* When the viewport is too narrow, switch to vertical scrolling and hide scroll buttons */
+            @media (max-width: 850px) {
+                .carousel {
+                    grid-auto-flow: row;
+                    overflow-x: hidden;
+                    overflow-y: auto;
+                    height: 90vh;
+                }
+
+                /* Remove scroll buttons when in vertical mode */
+                .carousel::scroll-button(*) {
+                    display: none;
+                }
+            }
+        </style>
+        <style>
+            /* Tournament section text styling */
+            .section-title.tournaments {
+                background: linear-gradient(90deg, #6ec6ff 60%, #ff66b2 100%);
+                color: #fff;
+            }
+            .tournaments-section {
+                margin: 48px auto 0 auto;
+                text-align: center;
+            }
+            .tournaments-section h2 {
+                color: #6ec6ff;
+                font-size: 2.3em;
+                font-weight: bold;
+                margin-bottom: 12px;
+                margin-top: 0;
+                letter-spacing: 1.5px;
+            }
+            .tournaments-section p {
+                color: #e9e9f4;
+                font-size: 1.25em;
+                margin: 0 auto 24px auto;
+            }
+            .tournaments-section a {
+                color: #ff66b2;
+                font-weight: bold;
+                text-decoration: underline;
+                transition: color 0.18s;
+            }
+            .tournaments-section a:hover,
+            .tournaments-section a:focus {
+                color: #6ec6ff;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Welcome to osu! med74</h1>
+        <p
+            style="
+                color: #c7c7e6;
+                font-size: 1.18em;
+                margin-bottom: 36px;
+                text-align: center;
+            "
+        >
+            This is the home page for the osu! section of med74's website.<br />
+            You can find tools, info, and other stuff related to osu! here.
         </p>
-    </div>
-    <script>
-        const leftBtn = document.querySelector('.carousel-arrow.left');
-        const carousel = document.getElementById('tools-carousel');
-        const rightBtn = document.querySelector('.carousel-arrow.right');
-
-        function getCardWidth() {
-            // Find the first card that is not a spacer
-            const realCard = carousel.querySelector('.card');
-            return realCard ? realCard.offsetWidth + 36 : 600 + 36; // card width + gap
-        }
-
-        function updateFadeAndButtons() {
-            const leftFade = document.querySelector('.carousel-fade.left');
-            const rightFade = document.querySelector('.carousel-fade.right');
-            if (carousel.scrollLeft <= 0) {
-                leftFade.style.opacity = "0";
-                leftBtn.disabled = true;
-            } else {
-                leftFade.style.opacity = "1";
-                leftBtn.disabled = false;
-            }
-            const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-            if (Math.abs(carousel.scrollLeft - maxScroll) < 2) {
-                rightFade.style.opacity = "0";
-                rightBtn.disabled = true;
-            } else {
-                rightFade.style.opacity = "1";
-                rightBtn.disabled = false;
-            }
-        }
-        
-        function scrollToCard(direction, e) {
-            if (e) e.preventDefault();
-            const cardWidth = getCardWidth();
-            let scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
-            let target = carousel.scrollLeft + scrollAmount;
-            // Clamp to [0, maxScroll]
-            const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-            if (target < 0) target = 0;
-            if (target > maxScroll) target = maxScroll;
-            carousel.scrollLeft = target;
-        }
-        
-        leftBtn.onclick = (e) => scrollToCard('left', e);
-        rightBtn.onclick = (e) => scrollToCard('right', e);
-        
-        carousel.addEventListener('scroll', updateFadeAndButtons);
-        updateFadeAndButtons();
-    </script>
-</body>
+        <hr />
+        <div class="section-title">My Tools</div>
+        <div class="carousel" id="tools-carousel">
+            <div class="card" id="card-1">
+                <div class="card-title">osu! Beatmap Downloader</div>
+                <div class="card-divider"></div>
+                <div class="card-content-row">
+                    <div class="card-image">
+                        <img
+                            src="/content/cards/obd.png"
+                            alt="osu! Beatmap Downloader"
+                        />
+                    </div>
+                    <div class="card-text">
+                        <div class="card-status card-status--completed"></div>
+                        <div class="card-desc">
+                            Download multiple osu! beatmaps at once and pack
+                            them up into mappacks easily.
+                        </div>
+                        <div class="card-platform">
+                            <strong>Platform:</strong> Windows
+                        </div>
+                    </div>
+                </div>
+                <a href="/osu/obd-github.html" class="card-link-btn"
+                    ><span>Go to Beatmap Downloader</span></a
+                >
+            </div>
+            <div class="card" id="card-2">
+                <div class="card-title">Default Match Time Scheduler</div>
+                <div class="card-divider"></div>
+                <div class="card-content-row">
+                    <div class="card-image">
+                        <img
+                            src="/content/cards/osu default scheduler.png"
+                            alt="osu! Default Scheduler"
+                        />
+                    </div>
+                    <div class="card-text">
+                        <div class="card-status card-status--graveyard"></div>
+                        <div class="card-desc">
+                            A tool that will suggest the best possible default
+                            match time for two different teams on different
+                            timezones.
+                        </div>
+                        <div class="card-platform">
+                            <strong>Platform:</strong> Web
+                        </div>
+                    </div>
+                </div>
+                <a href="/osu/scheduler.html" class="card-link-btn"
+                    ><span>Go to Default Scheduler</span></a
+                >
+            </div>
+            <div class="card" id="card-3">
+                <div class="card-title">Match Data Converter</div>
+                <div class="card-divider"></div>
+                <div class="card-content-row">
+                    <div class="card-image">
+                        <img
+                            src="/content/cards/match-data-converter.png"
+                            alt="Match Data Converter"
+                        />
+                    </div>
+                    <div class="card-text">
+                        <div class="card-status card-status--wip"></div>
+                        <div class="card-desc">
+                            Convert and analyze osu! match data easily for
+                            tournaments and results tracking.
+                        </div>
+                        <div class="card-platform">
+                            <strong>Platform:</strong> Web
+                        </div>
+                    </div>
+                </div>
+                <a href="/osu/match-data-converter.html" class="card-link-btn"
+                    ><span>Go to Match Data Converter</span></a
+                >
+            </div>
+            <div class="card" id="card-4"></div>
+            <div class="card" id="card-5"></div>
+            <div class="card" id="card-6"></div>
+            <!--
+            CARD TEMPLATE (copy and un-comment to create a new card)
+            <div class="card" id="card-template">
+                <div class="card-title">Title</div>
+                <div class="card-divider"></div>
+                <div class="card-content-row">
+                    <div class="card-image">
+                        <img src="" alt="" />
+                    </div>
+                    <div class="card-text">
+                        <div class="card-status card-status--wip"></div>
+                        <div class="card-desc">
+                            Description goes here.
+                        </div>
+                        <div class="card-platform">
+                            <strong>Platform:</strong> Platform name
+                        </div>
+                    </div>
+                </div>
+                <a href="#" class="card-link-btn"><span>Go to tool</span></a>
+            </div>
+            -->
+        </div>
+        <hr />
+        <div class="section-title tournaments">My Tournaments</div>
+        <div class="tournaments-section">
+            <h2>Tournaments I've Hosted</h2>
+            <p>
+                Check out the tournaments I've hosted on my
+                <a href="https://med74.rf.gd/tournaments.html"
+                    >tournaments page</a
+                >.
+            </p>
+        </div>
+    </body>
 </html>
